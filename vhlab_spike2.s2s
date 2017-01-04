@@ -1,0 +1,1757 @@
+'data collection program
+'
+'Spike2 program for acquiring data and saving it to disk.
+'
+'Program provides core services of beginning sampling, ending sampling, and saving to disk
+' * Acquisition can be started manually or in response to commands sent through files
+' * Acquisition can be stopped manually or in response to commands sent through files
+' * File name to save can be provided manually, automatically, or provided through files
+
+'At the end of acquisition, some information is written to the same directory as the data:
+'    stimtimes.txt, 1 row per stim w/ stim id, onset time, time of each frame trigger
+'    stimon.txt, 1 row of stim on event times
+'    frametrigger.txt, 1 row of frame trigger event times
+'    verticalblanking.txt, 1 row of vertical blanking event times
+'    spiketimes.txt, one row containing all spiketimes  (NOT PROPERLY TESTED YET)
+'    filetime.txt, number of seconds since midnight when recording started
+'    twophotontimes.txt, one row containing all two-photon scan start times (events)
+'    traintimes.txt, one row containing all recorded train times
+
+
+' Items that frequently require editing:
+
+
+'Filename selection and remote operation constants:
+const ExperimentPath$ := "C:\\remote\\";    ' Master directory of where to save data
+const LocalExperimentPath$ := "C:\\remote\\";
+const ExperNameFile$  := "C:\\remote\\experimentname.txt"; 'File contains 1 line with name of today's experiment (usually the date)     
+const InstructionFile$ :="C:\\remote\\instruction.txt"; 'Optional file that has instructions about where to save
+const StopFile$ := "C:\\remote\\stop.txt"; ' If this file exists then sampling stops
+const DataFileName$ := "spike2data";
+const IONTcommandfile$ := "C:\\remote\\iontophoresis_instruction.txt";
+const FileSep$ := "\\";  ' the character that separates files in this operating system
+const AlwaysEnterWaitMode% := 0;
+const StopFileCheckInterval := 1;
+const ListenToStop% := 0;
+
+'Additional output parameters
+const WriteStimTimes% := 1;
+const WriteSpikeTimes% := 1;
+const WriteFileTime% := 1;
+const WriteTwoPhotonTimes% := 1;
+const WriteIontophoresis% := 0;   ' write IONT data
+const WriteTrains% := 1;
+const WriteFrameTriggers% := 1;
+const WriteVerticalBlankingTriggers% := 1;
+const WriteStimOnTimes% := 1;
+
+
+const DoReMarkSpikes := 1;
+
+
+'  CORE GLOBAL VARIABLES
+const StimChan% := 22;    '(port 7) event channel 7 is used for stimtrig, and not for stim codes.
+const ElectrodeChan% := 1;  ' where the actual spike recording is
+const SpikeChan% := 20;
+const numSpikeChans% := 1; 'set the array spikeChanList below to include all spikeChans
+const numTrainChans% := 1; 'set number of output train channels
+const IontophoresisValChanCH0% := 28;
+const IontophoresisValChanCH1% := 29;
+const FrameTrigSync% := 23;      ' really the frame trigger
+const VerticalBlankingSync% := 24;
+const TwoPhotonSync% := 26;   ' really the two photon trigger
+const TrigChan% := 32;      ' the digimark channel
+const KeyboardChan% := 31;
+const TextChan% := 30;          
+const evchan0% := 2;            'pretty sure these are all tom's thing
+const evchan1% := 3;
+const evchan2% := 4;
+const evchan3% := 5;
+const evchan4% := 6;
+const evchan5% := 7;
+const evchan6% := 8;
+
+const tempPointSize% := 300;    ' tom's thing?
+const tempTraceSize% := 10;                  ' tom's thing?
+
+var SampleRate;
+var currFileName$;
+var waitFlag%,finalName%,lastStopFileCheck;
+var data%, i%, j%, stimnumber%;								'Handle of new data file
+var spikeChanList%[10];
+var trainChanList%[10];
+
+'***********USER DEFINED GLOBAL VARIABLES*****************************************
+'  PSTH variables
+const numOrient% := 20;
+const nummappingstages% := 50;
+const bkgndpts% := 10;
+const winwidth% := 20, winheight% := 20;
+'const numivsteps% := 11;
+const Duration := 2.25; '1.25;       'length of trace/psth plots
+const StimDuration := 2;     'amount of time to look at for calculating tuning
+const PSTHOffset := 0.125;    'time after beginning of trace until start of stim
+const PSTHBinSize := .05;
+const PSTHBins% := Duration / PSTHBinSize;
+const PSTHStartBin% := PSTHOffset / PSTHBinSize + 1;
+const PSTHTuningBins% := StimDuration / PSTHBinSize;
+const TrialBins% := Duration * 10000; ' samplerate
+const PreTrigger := 0;
+
+var sTime,eTime,edittime,updatetime, StimCode%, Duration%;
+var psth%[numOrient%], trialdata[TrialBins%], tuningtotal[PSTHTuningBins%];
+var FlashTuningPlot%, map$[nummappingstages%];
+var RawTrace%, SweepCounter%, channel%, mmchan%, pts%;
+var FlashTuningVals[numOrient%], RestingVals[numOrient%], temp, meantemp;
+var eventflag%, acquisitionflag%, sweepcount%, currentsweep%, newsweepflag%;
+var markertime[numOrient%], markercode%[numOrient%], textmarkercode%[5], blankcodes%[5];
+var dacmarker%,eventmarker%,stimcodemarker%,keyboardmarker%,eventnumber%, preforient%, checkit%, prefmaxval%, prefstimcode%;
+var currentmappingstage%, thismappingstage%;
+var newtrigger%,startwinnum%, stopwinnum%, rowpos%, colpos%, icount%, error%;
+var makefname$, startdate$, starttime$;
+var stimdesc$[nummappingstages%*numOrient%];
+var ymin,ymax, ytempmax, xmax, xmin; 
+var hexstr$, sweepdivisor%[numOrient%];
+var numrows%, numcols%, xdim%, ydim%;
+var psthymax, avwinset%, datastart, dataend, elapsedtimeflag%;
+var processtime, lookfortime, flagoptnorm%, newnorm%, logcurrent, logvoltage, colorvalue%;
+var slope, intercept, corr;
+
+spikeChanList%[0] := 20;  'set to include all spikeChans
+trainChanList%[0] := 28;
+
+'For iontophoresis IONT
+var CH0FLAG%:=0;  'Will get set to 1 if there are instructions to use channel 1 of the D/A
+var CH1FLAG%:=0;  'Ditto for channel 2
+const NSTIMS%:=1000;  'Max number of visual stimulus trials
+var IONTAD[NSTIMS%],IONTMAG[NSTIMS%],IONTPWIDTH[NSTIMS%],IONTPINTER[NSTIMS%],IONTNPULSES[NSTIMS%];  'Parameters of pulses, one per stimulus
+'Note that these are initialized at 0.  This is important because I will interpret 0 magnitude
+' to mean 'send no signal' rather than 'send 0'.
+const NATOV:=0.005;  'Conversion from desired nA to required Volts for driving NeuroPhore IP-2 unit 
+var LASTEVENTTIME:=0;
+const DACPERVOLT:=6553.6;
+
+
+'%%%%%%%%%%%CODE STARTS HERE%%%%%%%%%%%%%%%%%%%%%
+Restart();
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func New%()								'New sampling window
+
+
+LASTEVENTTIME:=0;  'IONT
+
+View(LogHandle());						'Make log view the current view
+EditSelectAll();						'Select all text in log view
+EditClear();							'Delete it
+Window(0,80,100,100);					'Display it at the bottom of the screen
+WindowVisible(1);						'Make it visbible
+
+if FileExists%(InstructionFile$) then  ' assume we have to wait for instruction file
+	FileDelete(InstructionFile$);
+endif
+
+finalName% := 0;  ' we don't have the final file name yet
+currFileName$ := GetFileName$(0);
+
+if data%>0 then							'If there is already a data view open then
+  View(data%);							'Close it
+  FileClose();
+endif;
+
+SampleSequencer("C:\\Documents and Settings\\vhlab\\My Documents\\spike2scripts\\iontophoresistrain_sequencer.pls");
+
+FilePathSet(FilePartDirName$(currFileName$));
+data%:=FileNew(0,1);'FileOpen("",0);					'Open a new data file for sampling
+if data%<0 then Message("Unable to open new data file: " + Error$(data%) +".");Halt() endif;
+SampleRate := 1.0/Binsize(TrigChan%);
+Window(30,2*winheight%,100,2*winheight%+40);
+WindowTitle$(currFileName$);
+DrawMode(-1,2);							'Set event draw mode to lines
+XRange(0,10);
+ViewUseColour(0);
+DrawMode(TrigChan%,1);
+DrawMode(31,1);
+YRange(FrameTrigSync%,0,5);
+YRange(TwoPhotonSync%,0,5);
+
+YRange(IontophoresisValChanCH0%,-100,100);
+YRange(IontophoresisValChanCH1%,-100,100);
+
+Init();
+
+ToolbarText("Press START to commence sampling");
+
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func OpenFile%()
+
+View(LogHandle());						'Make log view the current view
+EditSelectAll();						'Select all text in log view
+EditClear();							'Delete it
+Window(0,80,100,100);					'Display it at the bottom of the screen
+WindowVisible(1);						'Make it visbible
+
+if data%>0 then							'If there is already a data view open then
+  View(data%);							'Close it
+  FileClose();
+endif;
+
+data% := FileOpen("",0);
+if data% <0 then
+	return QuitRestart%();
+endif;
+View(data%);
+WindowVisible(1);
+currFileName$ := FileName$(data%);
+currFileName$ := Left$(currFileName$,Len(currFileName$)-4);
+finalName% := 1;
+PrintLog("Current file name", currFileName$);
+
+FilePathSet(FilePartDirName$(currFileName$));
+SampleRate := 1.0/Binsize(TrigChan%);
+Window(30,2*winheight%,100,2*winheight%+40);
+WindowTitle$(currFileName$);
+DrawMode(-1,2);							'Set event draw mode to lines
+XRange(0,10);
+ViewUseColour(0);
+DrawMode(TrigChan%,1);
+DrawMode(31,1);
+YRange(FrameTrigSync%,0,5);
+YRange(TwoPhotonSync%,0,5);
+
+ToolbarEnable(-1,0);						'Disable all buttons
+ToolbarEnable(30,1);						'Enable "Quit/Abort" button
+ToolbarEnable(29,1);						'Enable "Quit/Restart" button
+ToolbarEnable(32,1);						'Enable "Save&Close" button
+ToolbarEnable(31,1);						'Enable "Save&Close&Restart" button
+
+
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+proc Init()
+SetSpikeTemplates();
+MyInit();
+end
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+proc DoToolbar()
+ToolbarSet(0,"",Idle%);					'Call Idle%() whenever there is free time
+ToolbarSet(35,"Start", Start%);
+ToolbarSet(34,"Wait for Start",WaitForStart%);
+ToolbarSet(33,"Stop", Stop%);
+ToolbarSet(32,"Save&Close", SaveandClose%);
+ToolbarSet(31,"Save&Close&Restart", SaveandCloseandRestart%);
+ToolbarSet(30,"QuitAbort",QuitAbort%);				'Set up toolbar buttons
+ToolbarSet(29,"QuitRestart",QuitRestart%);				'Set up toolbar buttons
+ToolbarSet(28,"Open file...",OpenFile%);
+MyToolbarAdd();
+ToolbarEnable(-1,0);
+ToolbarEnable(35,1);
+ToolbarEnable(34,1);
+ToolbarEnable(28,1);
+'ToolbarEnable(31,1);
+MyToolbarEnable();
+
+if (AlwaysEnterWaitMode%=1) then
+	WaitForStart%();
+	Toolbar("Waiting for start", 1023);					'Wait here until quit is pressed
+else
+	Toolbar("Press SAMPLE START to commence sampling", 1023);					'Wait here until quit is pressed
+endif
+
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func GetFileName$(makedirs%)   '% GetFileName to save; create any needed dirs if makedirs%=1
+
+var filename$,expname$,expFile%,instFile%,subName$,lastView%;
+var IONTfile%;
+var IONTfields[6];
+var fileind%, EOFind%;
+
+if FileExists%(ExperNameFile$) then
+	expFile% := FileOpen(ExperNameFile$, 8, 0);
+	lastView% := View(expFile%);
+	Read(expName$);
+	FileClose(expFile%);
+	if ViewKind(lastView%)>0 then View(lastView%); endif
+else
+	PrintLog("No such file ", ExperNameFile$, " so using date as experiment directory.\r"); 
+	expName$ := Date$(2,2,3,3,"-"); ' use the date in yyyy-mm-dd (so exps are alphabetical)
+endif
+
+if (makedirs%=1 and (not (FileExists%(ExperimentPath$+expName$)))) then
+	PrintLog("About to create new directory " + ExperimentPath$+expName$+"\r");
+	ProgRun("cmd /c mkdir "+ ExperimentPath$+expName$ +"\r");
+	yield(0.5);
+endif
+
+expName$ := expName$ + "\\";  ' now add trailing character
+
+if FileExists%(InstructionFile$) then
+	yield(0.25);
+	instFile% := FileOpen(InstructionFile$,8,0);
+	lastView% := View(instFile%);
+	Read(subName$);
+	FileClose(instFile%);
+	if ViewKind(lastView%)>0 then View(lastView%); endif
+	PrintLog("The name read from the instruction file is "+subName$+".\r");
+else
+	subName$ := Time$(1,7,3,"-");
+endif
+
+if (makedirs%=1 and (not (FileExists%(ExperimentPath$+expName$+subName$)))) then
+	PrintLog("About to create new directory " + ExperimentPath$+expName$+subName$+"\r");
+	ProgRun("cmd /c mkdir "+ ExperimentPath$+expName$+subName$ +"\r");
+	yield(0.5);
+endif
+
+'IONT
+if FileExists%(IONTcommandfile$) then
+	yield(0.25);
+	IONTfile% := FileOpen(IONTcommandfile$,8,0);
+	lastView% := View(IONTfile%);
+
+	fileind%:=0;
+	EOFind%:=1;
+	while EOFind% > 0 do
+		EOFind% := Read(IONTfields[]);
+		'You'd think the argument would be the thing to read but no, it reads from the current view and
+		' writes to the argument.  Nice!
+		if(EOFind%>0) then
+			IONTAD[fileind%]:=IONTfields[1];
+			IONTMAG[fileind%]:=IONTfields[2];
+			IONTPWIDTH[fileind%]:=IONTfields[3];
+			IONTPINTER[fileind%]:=IONTfields[4];
+			IONTNPULSES[fileind%]:=IONTfields[5];
+			PrintLog("AD ",IONTAD[fileind%],", MAG ",IONTMAG[fileind%],", PWIDTH ",IONTPWIDTH[fileind%],", PINTER ",IONTPINTER[fileind%],", NUMPULSES ",IONTNPULSES[fileind%]);
+			fileind%:=fileind%+1;
+		endif
+	wend
+
+	FileClose(IONTfile%);
+	if ViewKind(lastView%)>0 then View(lastView%); endif
+else ' clear out the variables
+	fileind%:=0;
+	while fileind% < NSTIMS% do
+			IONTAD[fileind%]:=0;
+			IONTMAG[fileind%]:=0;
+			IONTPWIDTH[fileind%]:=0;
+			IONTPINTER[fileind%]:=0;
+			IONTNPULSES[fileind%]:=0;
+			fileind% := fileind% + 1;
+	wend
+
+		
+endif
+
+
+subName$ := subName$ + "\\";
+
+filename$ := ExperimentPath$ + expName$ + subName$ + DataFileName$;
+
+return filename$;
+end;
+
+'%%%%%%%%%%%%%%%%START/SAVE/QUIT/IDLE COMMANDS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func QuitRestart%()							'If "Quit" is pressed
+SampleStop();							'Stop sampling
+
+FileClose(-1,-1);
+Restart();
+return 0;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func QuitAbort%()							'If "Quit" is pressed
+SampleStop();							'Stop sampling
+FileClose(-1,-1);
+FilePathSet("C:\\Users");
+return 0;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func SaveandClose%()
+SampleStop();							'Stop sampling
+
+View(data%);
+if not(finalName%=1) then
+	currFileName$ := GetFileName$(1);
+	finalName%:=1
+endif
+View(data%);
+if not(FileExists%(currFileName$+".smr")) then
+	error% := FileSaveAs(currFileName$+".smr",-1);
+	if error%<0 then Message("Unable to save data file");Halt() endif;
+PrintLog(" Data File Saved: ", currFileName$);
+endif
+
+View(LogHandle());						'Make log view the current view
+error% := FileSaveAs(currFileName$+"log.txt",-1);
+if error%<0 then Message("Unable to save log file");Halt() endif;
+
+WriteOutput();
+
+return QuitAbort%();								'leave toolbar
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func SaveandCloseandRestart%()
+SaveandClose%();
+Restart();
+return 0;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+proc Restart()    'Restart the program
+data% := -1;
+ToolbarVisible(1);						'Make toolbar visible always
+New%();									'Set up new sampling window
+DoToolbar();							'Do the toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func WaitForStart%()							'If "WaitForStart" is pressed
+ToolbarEnable(-1,0);
+ToolbarEnable(33,1);
+waitFlag% := 1;
+PrintLog("Waiting for start\r");
+return 1;								'Stay with toolbar
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func Start%()							'If "Start" is pressed
+SampleStart();							'Start sampling
+TimeDate(lastStopFileCheck);
+ToolbarEnable(-1,1);	
+ToolbarEnable(32,0);						'Disable saveandclose
+ToolbarEnable(34,0);						'Disable "Wait for Start" button
+ToolbarEnable(35,0);						'Disable "Sample start" button
+ToolbarEnable(31,0);						'Disable "Quit" button
+ToolbarText("Press STOP to stop sampling");
+MyToolbarStart();
+
+return 1;								'Stay with toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func Stop%()							'If "Stop" is pressed
+SampleStop();							'Stop sampling
+ToolbarEnable(-1,0);						'Disable "Sample stop" button
+ToolbarEnable(30,1);						'Enable "Quit/Abort" button
+ToolbarEnable(29,1);						'Enable "Quit/Restart" button
+ToolbarEnable(32,1);						'Enable "Save&Close" button
+ToolbarEnable(31,1);						'Enable "Save&Close&Restart" button
+waitflag% := 0;
+MyToolbarStop();
+return 1;								'Stay in toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func Idle%()							'The Idle routine is called when PC has time
+var currTime;
+
+View(data%);
+eTime := Maxtime();
+View(SweepCounter%);
+currentsweep% := Sweeps();
+
+if SampleStatus()=0 then
+	' are we waiting for a start command?
+	if FileExists%(InstructionFile$) and (waitFlag%=1) then
+		PrintLog("About to start sampling\r");
+		currFileName$ := GetFileName$(1);
+		finalName%:=1;
+		waitFlag%:=0;
+		return Start%();
+	endif;
+endif;
+
+if SampleStatus()=2 then
+	TimeDate(currTime);
+	if (currTime-lastStopFileCheck)>StopFileCheckInterval then
+		TimeDate(lastStopFileCheck);
+		if FileExists%(StopFile$) then
+			FileDelete(StopFile$);
+			if ListenToStop%=1 then return Stop%(); endif
+		endif;
+	endif;
+   DoData();
+endif;
+
+sTime:=eTime;
+return 1;								'Stay in toolbar
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func WriteOutput() 'Writes stimtimes, spiketimes, and filetime to disk
+
+var dirName$;
+var stimfp%,stimMemChan%, starttime, endtime,stimcode%[4],currTime,spikecode%[4],trainMemChanUp%,trainMemChanDown%;
+var frameMemChan%,currFrameTime,nextStimTime;
+var spikefp%,spikeMemChan%,currSpikeTime,trainfp%;
+var filetimefp%,filetime%,tpfp%,tpMemChan%,markerList%[10],markerLoop%;
+var SpikeShapeDlg%,nTemplates%,tempSize%,tempSizeStart%,tempArray[tempPointSize%][tempTraceSize%],tempWidthArray[tempPointSize%][tempTraceSize%];
+var numTemps%,tempCode%;
+var tempLoop%, spikeChanLoop%, trainChanLoop%;
+var iontfp%;
+var ftfp%, ftMemChan%;
+var vbfp%, vbMemChan%;
+var stimonfp%, stimonMemChan%;
+
+dirName$ := FilePartDirName$(currFileName$);
+
+View(data%);
+starttime:=0; endtime:=MaxTime(VerticalBlankingSync%); FileTimeDate(filetime%);
+
+if WriteFileTime%=1 then
+	filetimefp% := FileOpen(dirName$+FileSep$+"filetime.txt",8,1);
+	View(filetimefp%); Print ("%d\n", filetime%); FileClose(); View(data%);
+endif
+
+if WriteStimTimes%=1 then
+	stimMemChan% := MemChan(5);
+	frameMemChan% := MemChan(5);
+	MemImport(stimMemChan%, TrigChan%, starttime,endtime);
+'	MemImport(frameMemChan%,StimSync%,starttime,endtime,3,1e-3,2.5);
+	MemImport(frameMemChan%,FrameTrigSync%,starttime,endtime);
+
+	currTime := starttime;
+	stimfp% := FileOpen(dirName$+FileSep$+"stimtimes.txt",8,1);
+	while currTime <> -1 do
+		'first write stimcode and time of stim
+		View(data%);
+		currTime := NextTime(stimMemChan%,currTime,stimcode%[]);
+		View(stimfp%);
+		if currTime <> -1 then Print("%d %8.5f", stimcode%[0], currTime); endif
+		'now write all frame times for the stim
+		currFrameTime := currTime;
+		View(data%);
+		nextStimTime := NextTime(stimMemChan%,currTime);
+		if nextStimTime=-1 then nextStimTime := MaxTime(VerticalBlankingSync%); endif
+		while (currFrameTime <> -1) and (currFrameTime<nextStimTime) do
+			View(data%);
+			currFrameTime := NextTime(frameMemChan%,currFrameTime);
+			View(stimfp%);
+			if (currFrameTime <> -1) and (currFrameTime<nextStimTime) then Print(" %8.5f", currFrameTime); endif
+		wend
+		View(stimfp%);
+		Print("\n");
+	wend
+	View(stimfp%); FileClose(); View(data%); ChanDelete(stimMemChan%); ChanDelete(frameMemChan%);
+endif
+
+if WriteStimOnTimes%=1 then
+    View(data%);
+    stimonMemChan% := MemChan(5);
+    MemImport(stimonMemChan%,TrigChan%,starttime,endtime);
+    
+    currTime := starttime;
+    stimonfp% := FileOpen(dirName$+FileSep$+"stimiontimes.txt",8,1);
+    while currTime <> -1 do
+		View(data%);
+        currTime := NextTime(stimonMemChan%,currTime,stimcode%[]);
+        View (stimonfp%);
+        if currTime <> -1 then Print ("%d %8.5f ", stimcode% [0], currTime);
+		endif
+	wend;
+	View(stimonfp%); Print("\n"); FileClose(); View(data%); ChanDelete(stimonMemChan%);
+endif
+        
+if WriteTwoPhotonTimes%=1 then
+	tpfp% := FileOpen(dirName$+FileSep$+"twophotontimes.txt",8,1);
+	View(data%);
+	tpMemChan% := MemChan(5);
+    'MemImport(tpMemChan%,TwoPhotonSync%,starttime,endtime,2,1e-3,2.5);
+    MemImport(tpMemChan%,TwoPhotonSync%,starttime,endtime);
+    
+	currTime := starttime;
+	while currTime <> -1 do
+		View(data%);
+		currTime := NextTime(tpMemChan%,currTime);
+		if currTime <> -1 then
+			View(tpfp%); Print ("%8.5f ",currTime);
+		endif
+	wend;
+	View(tpfp%); Print("\n"); FileClose(); View(data%); ChanDelete(tpMemChan%);
+endif
+
+if WriteFrameTriggers%= 1 then
+    ftfp% := FileOpen(dirName$+FileSep$+"frametrigger.txt",8,1);
+    View(data%);
+	ftMemChan% := MemChan(5);
+    MemImport(ftMemChan%,FrameTrigSync%,starttime,endtime);
+    
+    currTime := starttime;
+    while currTime <> -1 do
+        View(data%);
+        currTime := NextTime(ftMemChan%,currTime);
+        if currTime <> -1 then
+            View(ftfp%); Print ("%8.5f ", currTime);
+        endif
+    wend;
+    View(ftfp%); Print("\n"); FileClose(); View(data%); ChanDelete(ftMemChan%);
+ endif    
+    
+ if WriteVerticalBlankingTriggers%= 1 then
+    vbfp% := FileOpen(dirName$+FileSep$+"verticalblanking.txt",8,1);
+    View(data%);
+	vbMemChan% := MemChan(5);
+    MemImport(vbMemChan%,VerticalBlankingSync%,starttime,endtime);
+    
+    currTime := starttime;
+    while currTime <> -1 do
+        View(data%);
+        currTime := NextTime(vbMemChan%,currTime);
+        if currTime <> -1 then
+            View(vbfp%); Print ("%8.5f ", currTime);
+        endif
+    wend;
+    View(vbfp%); Print("\n"); FileClose(); View(data%); ChanDelete(vbMemChan%);   
+ endif
+'for each spike channel in list,
+'      write a file called spiketimes_X.txt with all spikes from channel X, where X runs from 1 to num spike channels 
+'      write a file called spiketimes_X_Y.txt, where Y is the three digit marker code 001-255.
+
+if DoReMarkSpikes=1 then
+	ReMarkSpikes(spikeChanList%[0]);
+endif
+
+if WriteSpikeTimes%=1 then
+	spikeChanLoop% := 0;
+	while spikeChanLoop% < numSpikeChans% do
+		ArrConst(markerList%[],-1);
+		spikefp% := FileOpen(dirName$+FileSep$+"spiketimes_" + Str$(spikeChanLoop%) + ".txt",8,1);
+		View(data%);
+		spikeMemChan% := MemChan(5);
+		MarkMask(spikeChanList%[spikeChanLoop%],-1,1,-1);
+		MemImport(spikeMemChan%,spikeChanList%[spikeChanLoop%],starttime,endtime);
+		currTime := starttime;
+		while currTime <> -1 do
+			View(data%);
+			currTime := NextTime(spikeMemChan%,currTime,spikecode%[]);
+			if currTime <> -1 then
+				View(spikefp%); Print ("%8.5f ",currTime);
+				' add the marker code to our list if it is unique
+				markerLoop% := 0;
+				while markerLoop%>=0 and markerLoop%<len(markerList%[]) do
+					if markerList%[markerLoop%] = -1 then
+						markerList%[markerLoop%] := spikecode%[0];
+						markerLoop% := -2;
+					else
+						if markerList%[markerLoop%] = spikecode%[0] then
+							markerLoop% := -2;
+						endif
+					endif
+					markerLoop% := markerLoop% + 1;
+				wend;
+			endif
+		wend;
+		View(spikefp%); Print("\n"); FileClose(); View(data%);
+		ArrSort(markerList%);
+		markerLoop% := 0;
+		while markerLoop% < len(markerList%[]) do
+			if markerList%[markerLoop%] <> -1 then
+				MarkMask(spikeMemChan%,-1,1,-1);  ' % exclude everything
+				MarkMask(spikeMemChan%,0,0,-1);   ' 
+				MarkMask(spikeMemChan%,0,1,markerList%[markerLoop%]); ' include our marker
+				spikefp% := FileOpen(dirName$+FileSep$+"spiketimes_" + Str$(spikeChanLoop%) + "_" + Print$("%.3d",markerList%[markerLoop%]) + ".txt",8,1);
+				View(spikefp%);
+				currTime := starttime;
+				while currTime <> -1 do
+					View(data%);
+					currTime := NextTime(spikeMemChan%,currTime);
+					if currTime <> -1 then
+						View(spikefp%); Print("%8.5f ", currTime);
+					endif
+				wend
+			endif;
+			markerLoop% := markerLoop% + 1;
+		wend;
+		spikeChanLoop% := spikeChanLoop% + 1;
+		ChanDelete(spikeMemChan%);
+	wend;
+endif
+
+'save the spike templates so we can set them to be the online templates for next time
+if WriteSpikeTimes%=1 then
+	spikefp% := FileOpen(LocalExperimentPath$+FileSep$+"Spike2Templates.bin",9,1);
+	BWriteSize(4,numSpikeChans%,spikeChanList%[0:numSpikeChans%],tempPointSize%,tempTraceSize%);
+	spikeChanLoop% := 0;
+	while spikeChanLoop% < numSpikeChans% do
+		View(data%);
+		SpikeShapeDlg% := SSopen(1);  ' bring spike shape dialog to front, keep it hidden
+		SSChan(spikeChanList%[spikeChanLoop%]); ' change channels to view the spike channel
+		tempSize% := SSTempSizeGet(tempSizeStart%); ' get size of template
+		numTemps% := SSTempInfo();                   ' get number of templates
+		tempLoop% := 0;
+		View(spikefp%);
+		BWriteSize(4,spikeChanList%[spikeChanLoop%],tempSize%,tempSizeStart%,numTemps%);
+		while tempLoop% < numTemps% do
+			ArrMul(tempArray[][],0);
+			ArrMul(tempWidthArray[][],0);
+		   View(SpikeShapeDlg%);
+			tempCode% := SSTempInfo(tempLoop%,1);  ' get template code
+			SSTempGet(tempLoop%,tempArray,0);      ' get mean template waveform
+			SSTempGet(tempLoop%,tempWidthArray,3); ' get template width
+			View(spikefp%);
+			BWriteSize(4,tempCode%,tempArray,tempWidthArray);
+			tempLoop% := tempLoop% + 1;
+		wend;
+		spikeChanLoop% := spikeChanLoop% + 1;
+	wend;
+	View(spikefp%);
+	FileClose();
+	View(SpikeShapeDlg%);
+endif
+
+if WriteIontophoresis%=1 then
+'Written by MM 10/06.  The goal here is to identify transitions in the iontophoresis current and to calculate the
+'average current both before and after such transitions, then to save all these data (average current before,
+'time of transition, average current after) to a text file.  IONT
+	'Need to do it twice, once for each iontophoresis channel.
+	' CH 0	
+	if(CH0FLAG%=1) then
+		iontfp% := FileOpen(dirName$+FileSep$+"iontophoresisCH0.txt",8,1);
+		interpretIont(iontfp%,0);
+	endif 'if(CH0FLAG%=1) then
+	' CH 1
+	if CH1FLAG%=1 then
+		iontfp% := FileOpen(dirName$+FileSep$+"iontophoresisCH1.txt",8,1);	
+		interpretIont(iontfp%,1);
+	endif
+endif 'if WriteIontophoresis%=1 then
+
+if WriteTrains%=1 then
+	trainChanLoop% := 0;
+	while trainChanLoop% < numTrainChans% do
+		trainfp% := FileOpen(dirName$+FileSep$+"traintimes_" + Str$(trainChanLoop%) + ".txt",8,1);
+		View(data%);
+		trainMemChanUp% := MemChan(5);
+		MemImport(trainMemChanUp%,trainChanList%[trainChanLoop%],starttime,endtime,2,0,2.5); 'rising level
+		currTime := starttime;
+		while currTime <> -1 do
+			View(data%);
+			currTime := NextTime(trainMemChanUp%,currTime);
+			if currTime <> -1 then
+				View(trainfp%); Print ("1 %8.5f\n",currTime);
+			endif
+		wend;
+		View(data%);
+		ChanDelete(trainMemChanUp%);
+		' now do falling levels
+		trainMemChanDown% := MemChan(5);
+		MemImport(trainMemChanDown%,trainChanList%[trainChanLoop%],starttime,endtime,3,0,2.5); 'falling level
+		currTime := starttime;
+		while currTime <> -1 do
+			View(data%);
+			currTime := NextTime(trainMemChanDown%,currTime);
+			if currTime <> -1 then
+				View(trainfp%); Print ("0 %8.5f\n",currTime);
+			endif
+		wend;
+		View(data%);
+		ChanDelete(trainMemChanDown%);
+		View(trainfp%);
+		FileClose();
+		trainChanLoop% := trainChanLoop% + 1;
+	wend;
+endif
+
+return 0;
+end; 'function
+
+func interpretIont(iontfp%,chnum%)
+
+	var IontophoresisTrigChan%;
+	var iontPosEventMemChan%,iontNegEventMemChan%;
+	var tPOS,tNEG,t1,t2;
+	var eventtype% := -1;
+	var meanPreCurrent,meanPostCurrent;
+	var npoints%;
+	var previousTime,followingTime;
+	var iontCurrentPRE[100000],iontCurrentPOST[100000];
+	var maxIontSampTime := 5;  'sec; maximum amount of time to sample the iontophoresis current channel
+	var nsamp%;
+	var ADCrate% := 10000;
+	var coef[500], coef2[1000];
+	var ftime, holdingCurr, maxCurr, minCurr,excCurr;
+	var ij%;
+	var starttime, endtime, currTime;
+	var currSD;
+	var IontophoresisValChan%;
+
+	if(chnum%=0) then
+		IontophoresisValChan%:=IontophoresisValChanCH0%;
+	else
+		IontophoresisValChan%:=IontophoresisValChanCH1%;
+	endif
+
+	View(data%);
+
+	starttime:=0; endtime:=MaxTime(FrameTrigSync%);
+
+	'Create the 'trigger channel' from the iontophoresis value channel
+	'To do this I'm going to filter the value channel and rescale it so that the holding current is 0 and all others are positive.
+
+	nsamp% := Round( (endtime-starttime) * ADCrate%);
+	
+	var iontValArray[nsamp%];  'Declare arrays to hold channel data
+	ChanData(IontophoresisValChan%,iontValArray[],starttime,endtime,ftime);
+	'Note: ftime holds the time of the first entry.  Will be used to make the new channel from this data array
+
+	'Smooth with boxcar
+	for ij%:=0 to 499 do
+		coef[ij%]:=0.002;
+	next;
+	ArrFilt(iontValArray[],coef[]);
+
+	'Make another version that's more intensely smoothed; will use this to find holding current and max value.
+	'This extra-filtered version will live in 'dummy'.
+	var dummy[nsamp%];
+	ArrConst(dummy[],iontValArray[]); 'Copies iontValArray into dummy, believe it or not.  Gotta love Spike2!
+	for ij%:=0 to 999 do
+		coef2[ij%]:=0.001;
+	next;
+	ArrFilt(dummy[],coef2[]);
+
+	'Calculate the holding current as the mean current from t=500ms to t=1000ms.
+	ArrSum(dummy[5000:10000],holdingCurr);	'(Yes, this calculates mean.  Go Spike2!)
+	PrintLog("holding=",holdingCurr);		
+
+	'Calculate the max absolute current excursion by subtracting holding current
+	ArrSub(dummy[],holdingCurr);
+	Abs(dummy[]);
+	maxCurr := dummy[Max(dummy[])];  'Need this syntax b/c Max() gives index, not value. xo Spike2!
+	minCurr := dummy[Min(dummy[])];
+	excCurr := maxCurr-minCurr;
+
+	if( excCurr<10 ) then
+		ArrMul(iontValArray[],0);
+		'Checks to see if this channel is unmodulated; if so, disable it
+	else
+		'Rescale iontValArray			
+		ArrSub(iontValArray[],holdingCurr); 	'Subtract holding current
+		Abs(iontValArray[]); 						'Take abs value
+	endif
+
+	'Finally, write the array into a new channel
+	IontophoresisTrigChan% := MemChan(1,0,BinSize(IontophoresisValChan%));
+	ChanWriteWave(IontophoresisTrigChan%,iontValArray[],ftime);
+	
+	'var dummyfp%;
+	'dummyfp% := FileOpen(dirName$+FileSep$+"dummy.txt",8,1);
+	'View(dummyfp%);
+	'Print("%8.5f ",iontValArray[]);
+	'FileClose();
+	'View(data%);
+
+	'__________________________________________________________
+	'Identify level crossings in the trigger channel
+	View(data%);
+	iontPosEventMemChan% := MemChan(3);
+	MemImport(iontPosEventMemChan%, IontophoresisTrigChan%, starttime,endtime,2,1e-3,Abs(holdingCurr));
+	
+	iontNegEventMemChan% := MemChan(2);
+	MemImport(iontNegEventMemChan%, IontophoresisTrigChan%, starttime,endtime,3,1e-3,Abs(holdingCurr));
+
+	'Now loop through event times and save the times as well as the mean current in epochs around the event
+	currTime := starttime;
+
+	while currTime <> -1 do
+		View(data%);
+	
+		'Define the time of the FORMER event
+		previousTime := currTime;
+		
+		'Define the time of the CURRENT event; save in currTime
+		tPOS := NextTime(iontPosEventMemChan%,currTime);
+		tNEG := NextTime(iontNegEventMemChan%,currTime);
+
+		if(tPOS=-1) and (tNEG=-1) then
+			currTime := -1;
+		endif
+		if (tNEG=-1) and (tPOS<>-1) then
+			currTime := tPOS;
+			eventtype% := 1;
+		endif
+		if (tPOS<>-1) and (tNEG<>-1) and (tPOS<=tNEG) then
+			currTime := tPOS;
+			eventtype% := 1;
+		endif
+		if (tPOS=-1) and (tNEG<>-1) then
+			currTime := tNEG;
+			eventtype% := 0;
+		endif
+		if (tPOS<>-1) and (tNEG<>-1) and (tNEG<tPOS) then
+			currTime := tNEG;
+			eventtype% :=0;
+		endif
+
+		'Define the time of the FOLLOWING event; save in followingTime
+		tPOS := NextTime(iontPosEventMemChan%,currTime);
+		tNEG := NextTime(iontNegEventMemChan%,currTime);
+
+		if(tPOS=-1) and (tNEG=-1) then
+			followingTime := endtime;
+		endif
+		if (tNEG=-1) and (tPOS<>-1) then
+			followingTime := tPOS;
+		endif
+		if (tPOS<>-1) and (tNEG<>-1) and (tPOS<=tNEG) then
+			followingTime := tPOS;		
+		endif
+		if (tPOS=-1) and (tNEG<>-1) then
+			followingTime := tNEG;
+		endif
+		if (tPOS<>-1) and (tNEG<>-1) and (tNEG<tPOS) then
+			followingTime := tNEG;
+		endif
+
+		''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+		'Now sample the iontophoresis current channel around the time of the current event
+
+		if(currTime <> -1) then
+			'Define epoch for sampling current
+			t1 := currTime - maxIontSampTime;
+			t2 := currTime + maxIontSampTime;
+
+			'Clean up t1 and t2
+			if(t1<starttime) then t1:=starttime; endif
+			if(t1<previousTime) then t1:=previousTime+0.005; endif
+			if(t2>endtime) then t2:=endtime; endif
+			if(t2>followingTime) then t2:=followingTime-0.005; endif
+
+			'Calculate the average pre-transition current
+			npoints% := ChanData(IontophoresisValChan%,iontCurrentPRE[],t1,currTime-0.005);
+			'iontCurrentPRE now holds the pre-transition current
+			ArrSum(iontCurrentPRE[0:npoints%],meanPreCurrent);
+
+			'Calculate the average post-transition current
+			npoints% := ChanData(IontophoresisValChan%,iontCurrentPOST[],currTime+0.005,t2);
+			'iontCurrentPOST now holds the post-transition current
+			ArrSum(iontCurrentPOST[0:npoints%],meanPostCurrent,currSD);
+
+			if(eventtype%=1) then
+				'If this is an 'on' event, look at the std dev in the current following the transition;
+				'high std dev suggests that the iontophoresis machine was saturating.
+				'If so, set the eventtype to be 2.
+
+				if(currSD>(excCurr/2)) then
+					eventtype%:=2;
+				endif
+
+				
+			endif
+	
+		endif
+
+		View(iontfp%);
+		if currTime <> -1 then Print("%8.5f %8.5f %8.5f %d\n",meanPreCurrent,currTime,meanPostCurrent,eventtype%); endif
+
+	wend
+	View(iontfp%); FileClose(); View(data%);
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func SetSpikeTemplates() ' Reads last spike templates from disk, sets them to be current
+
+var spikefp%, numTemps%, SpikeShapeDlg%, spikeChanLoop%, tempSize%, tempLoop%, tempSizeStart%;
+var tempArray[tempPointSize%][tempTraceSize%],tempWidthArray[tempPointSize%][tempTraceSize%],tempCode%;
+var readNumSpikeChans%,readSpikeChanList%[10],loopSpikeChan%,readTempPointSize%,readTempTraceSize%;
+var cont% := 1, readSpikeChan%;
+
+ArrConst(readSpikeChanList%[],-1);
+
+  ' make sure we can find file and that spikeChanList is same between file and current setup
+spikefp% := FileOpen(LocalExperimentPath$+FileSep$+"Spike2Templates.bin",9,0);
+if spikefp%>=0 then
+	View(spikefp%);
+	cont% := BReadSize(4,readNumSpikeChans%);
+	'PrintLog("readNumSpikeChans% = " + Str$(readNumSpikeChans%) + ", cont% = " + Str$(cont%) + " .\n");
+	if cont% >= 0 then
+		if readNumSpikeChans% <> numSpikeChans% then cont% := -1; endif
+		loopSpikeChan% := 0;
+		while (loopSpikeChan% < readNumSpikeChans%) and (cont% >= 0) do
+			cont% := BReadSize(4,readSpikeChanList%[loopSpikeChan%]);
+			'PrintLog("readSpikeChanList% = " + Str$(readSpikeChanList%[loopSpikeChan%]) + ", cont% = " + Str$(cont%) + " .\n");
+			if readSpikeChanList%[loopSpikeChan%] <> spikeChanList%[loopSpikeChan%] then cont% := -1; endif
+			loopSpikeChan% := loopSpikeChan% + 1;
+			'PrintLog("cont% = " + Str$(cont%) + ".\n");
+		wend;
+		if cont% >= 0 then
+			cont% := BReadSize(4,readTempPointSize%,readTempTraceSize%);
+			'PrintLog("readTempPointSize% = " + Str$(readTempPointSize%) + ", and tempPointSize% = " + Str$(tempPointSize%) + ".\n");
+			'PrintLog("readTempTraceSize% = " + Str$(readTempTraceSize%) + ", and tempTraceSize% = " + Str$(tempTraceSize%) + ".\n");
+			if (readTempPointSize% <> tempPointSize%) or (readTempTraceSize% <> tempTraceSize%) then cont% := -1; endif
+		endif
+	endif
+	if cont% > 0 then  ' we have a match between the present setup and that in the file, so the following should succeed 
+		PrintLog("Attemping to install templates.  [If error occurs, try deleting REMOTEDIR\Spike2Templates.bin.]\n");
+		View(data%);
+		SpikeShapeDlg% := SSopen(1);
+		SSTempDelete(-1); ' delete all templates
+		loopSpikeChan% := 0;
+		while loopSpikeChan% < numSpikeChans% do
+			View(spikefp%);
+			BReadSize(4,readSpikeChan%,tempSize%,tempSizeStart%,numTemps%);
+			PrintLog("readSpikeChan% = " + Str$(readSpikeChan%) + ", tempSize% = " + Str$(tempSize%) + ", numTemps% = " + Str$(numTemps%) + "\n");
+			View(SpikeShapeDlg%);
+			SSChan(readSpikeChan%);
+			SSTempSizeSet(tempSizeStart%,tempSize%);
+			tempLoop% := 0;
+			while tempLoop% < numTemps% do
+				View(spikefp%);
+				BReadSize(4,tempCode%,tempArray,tempWidthArray);
+				View(SpikeShapeDlg%);
+				'PrintLog("Setting new waveform with tempCode% = " + Str$(tempCode%) + ".\n");
+				SSTempSet(tempArray,tempCode%,tempWidthArray);
+				tempLoop% := tempLoop% + 1;
+			wend;
+			loopSpikeChan% := loopSpikeChan% + 1;
+		wend;
+	else
+		PrintLog("Note: will not restore previous spike waveform templates due to difference between current setup and saved setup.\n");
+	endif
+endif
+
+if spikefp%>0 then View(spikefp%); FileClose(); endif
+if SpikeShapeDlg%>0 then
+	View(SpikeShapeDlg%); 
+	'FileClose();
+endif;
+
+return 0;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%FILE TOOLS%%%%%%%%%%%%%%%%%%%%%%%%%
+'%%%%%%%%%%FILEEXISTS%%%%%%%%%%%%%%%%%%%
+'Returns a number if the given file exists and returns
+'0 otherwise.  The number returned is 1 for files and
+'2 for directories.  filename$ can either be a full-path name
+'or the name of a file in the current directory.
+'Sometimes filenames have a \ in them that does not 
+'indicate a directory separation.  This function does not
+'recognize "\\" as a literal "\" in these filenames and will
+'fail on those cases.
+'Remember when coding filenames as strings you must code
+'a "\\" in spike2 to indicate "\".
+func FileExists%(filename$)
+
+var fn$,dirName$,exists%,dummy$,currPath$;
+
+currPath$ := FilePath$();
+
+dirName$ := FilePartDirName$(filename$);
+fn$ := FilePartFileName$(filename$);
+
+'PrintLog("Filename is ", filename$, ", dirName is ", dirName$, ", fn is ", fn$, ".\r");
+
+if len(dirName$)>0 then
+	'PrintLog("Setting path to ", dirName$, "\r");
+	FilePathSet(dirName$);
+	'PrintLog("Current path is now ", FilePath$(), "\r");
+endif
+
+exists% := FileList(dummy$,-1,fn$) + 2 * FileList(dummy$,-2,fn$);
+
+FilePathSet(currPath$);
+return exists%;
+end;
+
+'%%%%%%%%%%FILEPARTDIRNAME%%%%%%%%%%%%%%
+'Returns parent directory given a full-path file name
+'If filename$ is not a full-path file name but is a file
+'then an empty string is returned.  This function does not check
+'for file existence and only operates on the strings.
+'The trailing file separator '\' is included.
+'Remember when coding filenames as strings you must code
+'a "\\" in spike2 to indicate "\".
+'Sometimes filenames have a \ in them that does not 
+'indicate a directory separation.  This function does not
+'recognize "\\" as a literal "\" in these filenames and will
+'fail on those cases.
+func FilePartDirName$(filename$)
+
+var ind%;
+var fg% := 0;
+var dirName$ := "";
+
+ind% := len(filename$);
+
+while ((ind% > 0) and (fg%=0)) do
+	if InStr(Mid$(filename$,ind%,1),Left$(FileSep$,1)) then
+		fg% := 1;
+	else
+		ind% := ind% - 1;
+	endif
+wend
+
+if (fg%=1) then  '  if we found a file separator then finish
+	dirName$ := Left$(filename$,ind%);
+endif
+
+return dirName$;
+end;
+
+'%%%%%%%%%FILEPARTFILENAME%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'Returns the file name portion of a full-path filename
+'If filename$ is not a full-path file name but is a file
+'then filename$ is returned.  This function does not check
+'for file existence and only operates on strings.
+'Remember when coding filenames as strings you must code
+'a "\\" in spike2 to indicate "\".
+'Sometimes filenames have a \ in them that does not 
+'indicate a directory separation.  This function does not
+'recognize "\\" as a literal "\" in these filenames and will
+'fail on those cases.
+func FilePartFileName$(filename$)
+var fn$;
+var dirName$;
+dirname$ := FilePartDirName$(filename$);
+fn$ := Right$(filename$,len(filename$)-(len(dirName$)));
+return fn$;
+end;
+
+
+'*******BEGINNING OF USER-MODIFYABLE SECTION************
+'*******************************************************
+
+
+
+'*******INITIALIZATION ROUTINES*************************
+proc MyInit()
+PSTHInit();
+end
+'*******TOOLBAR*****************************************
+proc MyToolbarAdd()
+ToolbarSet(10,"Clear", ClearTemplate%);
+ToolbarSet(9,"ZoomWin", ZoomWin%);
+ToolbarSet(8,"PlotNorm", PlotNormalize%);
+ToolbarSet(7,"PlotOpt", PlotOptimize%);
+ToolbarSet(6,"VoltChan",SelectedChan%);
+ToolbarSet(5,"AllChan", ShowAllChan%);
+ToolbarSet(4,"pg 1", Stim1to9%);
+ToolbarSet(3,"pg 2", Stim10to19%);
+ToolbarSet(2,"ReTile", MyTile%);
+ToolbarSet(1,"Color", SetColor%);
+end
+proc MyToolbarEnable()
+end
+proc MyToolbarStart(); ' called when start button hit
+end
+proc MyToolbarStop();  ' called when sampling stopped
+end
+'************************IDLE ROUTINE DURING SAMPLING***
+func DoData();
+if Maxtime(TrigChan%)>0 then
+	CheckIont();
+endif
+MyDoData();
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'%%%%%%%%%%%%%%%%% CheckIont()
+
+proc CheckIont()
+	var event;
+	var q,iontmagtemp;
+	var iontAD%,iontmag%,iontdur%,iontnumpulses%,iontpulseinterval%;
+	var t0,tcurr;
+	var holdarray[1000]; '0.1 ms-long arrays of holding current
+	var ntics%;
+	var holdcurr;
+	var dummy%[4];
+	var stimindex%;
+
+
+    View(data%);
+
+	tcurr := Maxtime(TrigChan%);
+
+	event := NextTime(TrigChan%,Maxtime(TrigChan%)-Binsize(TrigChan%),dummy%[]);
+'Look to see if there's an event at current time
+   stimindex% := dummy%[0]-1;
+
+
+if (event>0 and stimindex%>0) then
+    
+    
+  'if (stimindex%>0) then
+    
+		'A stimulus was found
+        
+		if (event-LASTEVENTTIME)>0.1 and tcurr>0.1 then
+		'0.1s must elapse between events; prevents multiple identifications of one event
+			LASTEVENTTIME:=event;
+
+			'Find the stimcode for this event and convert it to an index into the iont arrays
+			stimindex% := dummy%[0]-1;
+			'Need to subtract 1 because code "1" is for the first entry in the list
+			'Now stimcode% is actually an index into the A/D, magnitude, and duration arrays
+
+			'Identify which A/D channel to do
+			iontAD% := Round(IONTAD[stimindex%]);
+
+			'Set the flags
+			if iontAD%=0 and CH0FLAG%=0 then
+				CH0FLAG%:=1;
+			endif
+			if iontAD%=1 and CH1FLAG%=0 then
+				CH1FLAG%:=1;
+			endif
+
+			'Measure the holding current
+			'Logic: measure the average current in the last 100ms; do it only in the relevant channel
+			t0 := tcurr-0.1;
+			if(iontAD%=0) then
+				ntics%:=ChanData(IontophoresisValChanCH0%,holdarray[],t0,tcurr);
+			else
+				ntics%:=ChanData(IontophoresisValChanCH1%,holdarray[],t0,tcurr);
+			endif
+			ArrSum(holdarray[],holdcurr);   'Takes the average of holdarray and assigns it to holdcurr
+
+			'Now calculate the appropriate magnitude of the current, correcting for the holding current
+			iontmagtemp := (IONTMAG[stimindex%]-holdcurr)*NATOV*DACPERVOLT;
+			iontmag% := Round(iontmagtemp);
+
+			'Get the duration
+			q := IONTPWIDTH[stimindex%]-1;
+			'Note: subtracting 1 ms because the sequencer steps each take 1ms. I'm supposed to do this! Really!
+			iontdur% := Round(q);
+			PrintLog("Duration ", iontdur%,"\n");
+
+			q := IONTPINTER[stimindex%]-1;
+			iontpulseinterval% := Round(q);
+
+			q := IONTNPULSES[stimindex%];
+			iontnumpulses% := Round(q);
+				
+			if Round(IONTMAG[stimindex%])<>0 then
+				SampleSeqVar(1,iontmag%);
+				SampleSeqVar(2,iontpulseinterval%);
+				SampleSeqVar(3,iontdur%);
+				SampleSeqVar(4,iontnumpulses%);
+				if(iontAD%=0) then
+					SampleKey("E");
+				else
+					SampleKey("I");
+				endif
+			endif
+	
+		endif 'if (event-LASTEVENTTIME)>0.1 then
+      'endif 'if stimindex% > 0
+	endif 'if event%>0 then  'A stimulus was found
+end
+
+'************************ROUTINES RUN BEFORE SAVE
+func MySave();
+
+end;
+
+'***************PSTHINIT*******************************
+proc PSTHInit();
+numrows% := 5; numcols% := 5;
+xdim% := 100 / numcols%; ydim% := 100 / numrows%;
+eventflag% := 0; newsweepflag% := 0;
+elapsedtimeflag% := 0;
+sTime :=0; flagoptnorm% := 1;
+psthymax := -99999; newnorm% := 1;
+colorvalue% := 1;
+
+currentmappingstage% := 0;
+View(data%);
+for j% := 1 to numOrient%-1 do
+     psth%[j%] := SetPSTH(SpikeChan%,PSTHBins%,PSTHBinSize,PSTHOffset,0,1);
+	  WindowTitle$("Stim"+Str$(j%));
+     if psth%[j%]<0 then Message("Unable to open new window");Halt() endif;
+next;
+
+View(data%);
+RawTrace% := SetAverage(ElectrodeChan%,TrialBins%,PSTHOffset,StimChan%,0);
+ProcessTriggered(Duration, PreTrigger, StimChan%, 1, 1);
+if RawTrace%<0 then Message("Unable to open new window");Halt() endif;
+
+SweepCounter% := SetAverage(ElectrodeChan%,TrialBins%,PSTHOffset,StimChan%,0);
+if SweepCounter%<0 then Message("Unable to open new window");Halt() endif;
+ProcessTriggered(1, 0, StimChan%, 0, 0);
+sweepcount% := Sweeps();
+
+FlashTuningPlot% :=SetResult(numOrient%, 1, 0,"Tuning ", "Stim Code");
+if FlashTuningPlot%<0 then Message("Unable to open new window");Halt() endif;
+XRange(1,numOrient%);
+
+FirstTile%();
+Stim10to19%();
+Stim1to9%();
+avwinset%:=1;
+psthymax := -99999;
+PlotOptimize%();	
+SelectedChan%();
+FrontView(LogHandle());					'Bring the Log view to the front
+
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func PlotNormalize%()							'If "Quit" is pressed
+
+  flagoptnorm% := 0;
+  psthymax := -99999;
+
+  for i% := 1 to numOrient%-1 do
+      View(psth%[i%]);
+		ytempmax := [Max([])];
+		if ytempmax > psthymax and ytempmax <> 0 then 
+		   psthymax := ytempmax;
+		endif
+       View(LogHandle());						'Make log view the current view
+		 'Print("avymin=%4f avymax=%4f  ytempmin=%4f ytempmax=%4f\n",avymin,avymax,ytempmin,ytempmax);
+   next;
+
+	for i% := 1 to numOrient%-1 do
+       View(psth%[i%]);
+	    YRange(0,0,psthymax);
+   next;
+'PrintLog("min",avymin,"max",avymax);
+return 1;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func PlotOptimize%()						
+
+  flagoptnorm% := 1;
+
+  for i% := 1 to numOrient%-1 do
+      View(psth%[i%]);
+      Optimise(0,0,2);
+  next;
+'DrawAll();
+'PrintLog("PlotOptimize");
+return 1;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func MyDoData()
+var numevents%;
+var stimlabel%, stimstring$;
+'_____________________________________________________________________________________________________
+View(data%);
+numevents% := Count(StimChan%, sTime, eTime);
+if eventflag% = 0 and numevents% > 0  then
+   eventnumber% := ChanData(TrigChan%,markertime[],sTime,eTime);
+   lookfortime := (markertime[0]+Duration);
+   LastTime(TrigChan%,eTime,markercode%[]);
+   dacmarker% := markercode%[0];
+	eventmarker%:=Count(evchan0%,sTime,eTime)*256+Count(evchan1%,sTime,eTime)*512+Count(evchan2%,sTime,eTime)*1024+Count(evchan3%,sTime,eTime)*2048+Count(evchan4%,sTime,eTime)*4096+Count(evchan5%,sTime,eTime)*8192+Count(evchan6%,sTime,eTime)*16384;
+   stimcodemarker% := dacmarker%+eventmarker%;
+   error% := SampleText(Str$(stimcodemarker%));
+   thismappingstage% := stimcodemarker%/numOrient% + 1;
+   stimnumber% := stimcodemarker% - (thismappingstage%-1)*numOrient%;
+   if (thismappingstage% <> currentmappingstage%) then 
+      for i% := 1 to numOrient%-1 do
+         ArrConst(View(psth%[i%]).[],0);
+'         ArrConst(avtotal[i%][],0);
+'			sweepdivisor%[i%] := 0;
+		next;  
+      ArrConst(View(FlashTuningPlot%).[],0);
+'      ArrConst(View(DriftTuningPlot%).[],0);
+	   currentmappingstage% := thismappingstage%;
+ 	   PrintLog("New mappingstage: ", currentmappingstage%);', "        title: ",map$[currentmappingstage%]);
+		for i% := 1 to numOrient%-1 do
+          View(psth%[i%]);
+			 stimlabel% := i% + (thismappingstage%-1)*numOrient%;
+          stimstring$ := Print$("%4d %4d %4x %4s",i%,stimlabel%,stimlabel%,chr$(stimlabel%));
+          WindowTitle$(stimstring$);
+		next;
+   endif
+   eventflag% := 1;
+'   PrintLog("eventflag.");
+   View(data%);
+endif
+
+'_____________________________________________________________________________________________________
+if eventflag% = 1 and currentsweep% > sweepcount% then
+     newsweepflag% := 1;
+     sweepcount% := currentsweep%;
+'	  PrintLog("sweepflag= ",newsweepflag%);
+endif;
+
+processtime := MaxTime();
+if  eventflag% = 1 and  processtime > lookfortime then
+    elapsedtimeflag% := 1;
+'    PrintLog("now: ", MaxTime()," want: ",(markertime[0]+Duration));
+endif
+'_____________________________________________________________________________________________________
+if eventflag% = 1 and newsweepflag% = 1 and elapsedtimeflag% = 1 then
+    if (processtime-markertime[0]) > Duration then
+       datastart:=markertime[0];
+	    dataend:=datastart+Duration;
+       checkit%:=ChanData(ElectrodeChan%,trialdata[],datastart,dataend);
+		 logvoltage := trialdata[1]*100;
+		'Update PSTH
+		if 0 then
+			View(psth%[stimnumber%]);
+			Process(datastart,dataend);
+
+		'Set Plotting Range based on Optimization or Normalization
+			 ytempmax := [Max([])];
+		    if ytempmax > psthymax and ytempmax <> 0 then 
+			    psthymax := ytempmax;
+				 newnorm% := 1;
+		    endif  
+		 	 if (flagoptnorm% = 1)then				'Optimize
+		       YRange(0,0,ytempmax);
+			 endif
+			 if (flagoptnorm% = 0 and newnorm% = 1) then  'Normalize
+			 	 for i% := 1 to numOrient%-1 do
+  	           View(psth%[i%]);
+		          YRange(0,0,psthymax);
+  	        next;
+			    newnorm% := 0;
+			 endif
+		
+		 'Update Tuning
+		 View(FlashTuningPlot%);
+       [stimnumber%] := ArrSum(View(psth%[stimnumber%]).[PSTHStartBin%:PSTHTuningBins%]);
+       YRange(0,0,[Max(View(FlashTuningPlot%).[])]);
+       prefstimcode% := Max(View(FlashTuningPlot%).[]);
+endif
+
+'Send stimcode from 1401 to MacStim through digital output port using sequencer file
+'      prefstimcode% :=  prefmaxval%; 
+'      PrintLog("digout: ",prefstimcode%);
+       View(LogHandle());						'Make log view the current view
+'  Print("Stim: %4d %4x %4s\tStimID: %4d Sweeps: %4d eventTime: %6.3f timecheck %6.3f\tPref: %3d\n",stimcodemarker%,stimcodemarker%,Chr$(stimcodemarker%),stimnumber%,sweepdivisor%[stimnumber%],markertime[0],processtime-lookfortime,prefstimcode%);
+'   if stimcodemarker% < 65 then
+ ' Print("Stim: %4d %4x\tStimID: %4d Sweeps: %4d eventTime: %6.3f %6.1fpA %6.1fmV\tPref: %3d\n",stimcodemarker%,stimcodemarker%,stimnumber%,Sweeps(),markertime[0],logcurrent,logvoltage,prefstimcode%);
+ '  else
+'Print("Stim: %4d %4x %4s\tStimID: %4d Sweeps: %4d eventTime: %6.3f %6.1fpA %6.1fmV\tPref: %3d\n",stimcodemarker%,stimcodemarker%,chr$(stimcodemarker%),stimnumber%,Sweeps(),markertime[0],logcurrent,logvoltage,prefstimcode%);
+ ' endif
+       View(data%);
+       SampleSeqVar(10, prefstimcode% * 256);
+       SampleKey("A");
+'      checkit% := SampleSeqVar(10);
+'      PrintLog("check: ",checkit%);
+
+       eventflag% := 0;
+       newsweepflag% := 0;
+       elapsedtimeflag% := 0;
+'      PlotNormalize%();
+    else
+       View(LogHandle());						'Make log view the current view
+       Print("Discarded Trial: Stim: %3d \tStimID: %3d eventTime: %6.3f lookforTime: %6.3f processTime: %6.3f elapsedtime %6.3f\n",stimcodemarker%,stimnumber%,markertime[0],lookfortime,processtime,processtime-markertime[0]);
+       eventflag% := 0;
+       newsweepflag% := 0;
+       elapsedtimeflag% := 0;
+	 endif
+endif;
+
+'_____________________________________________________________________________________________________
+View(data%);
+numevents% := Count(TrigChan%, sTime, eTime);
+if numevents% > 0  then
+   eventnumber% := ChanData(TrigChan%,markertime[],sTime,eTime);
+   LastTime(TrigChan%,eTime,markercode%[]);
+	endif;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func SetColor%()
+
+if colorvalue% = 0 then
+  ViewUseColour(0);
+  colorvalue% := 1;
+else 'colorvalue% = 1
+  ViewUseColour(1);
+  colorvalue% := 0;
+endif;
+
+return 1;
+end;                          
+
+func SelectedChan%()
+view(data%);
+ChanHide(29,28,31,27,25);
+ChanWeight(ElectrodeChan%,5);ChanWeight(SpikeChan%,5);
+ChanWeight(TrigChan%,3);
+ChanWeight(TextChan%,3);
+ChanWeight(StimChan%,3);
+ChanWeight(TwoPhotonSync%,3);
+ChanWeight(VerticalBlankingSync%,3);
+ChanWeight(FrameTrigSync%,3);
+
+DrawMode(30,14);
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func ClearTemplate%()							'If "Quit" is pressed
+
+      for i% := 1 to numOrient%-1 do
+         ArrConst(View(psth%[i%]).[],0);
+		next;  
+      ArrConst(View(FlashTuningPlot%).[],0);
+	   currentmappingstage% := thismappingstage%;
+	   PrintLog("Clear Template.  Mappingstage: ", currentmappingstage%);', "        title: ",map$[currentmappingstage%]);
+
+		return 1;								'leave toolbar
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func ZoomWin%()
+view(data%);
+Optimise(5);
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func ShowAllChan%()
+view(data%);
+ChanShow(2,4,5,6,7,8,9,31,32);
+return 1;
+end;
+
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func Stim1to9%()
+   for i% := 1 to (numOrient%/2)-1 do
+      FrontView(psth%[i%]);
+   next;
+	avwinset% := 1;
+return 1;
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func Stim10to19%()
+   for i% := (numOrient%/2) to numOrient%-1  do
+      FrontView(psth%[i%]);
+   next;
+	avwinset% := 2;
+return 1;
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func FirstTile%()
+
+View(LogHandle());						'Make log view the current view
+Window(0,80,100,100);					'Display it at the bottom of the screen
+					
+	icount% := 1;
+   for i% := 1 to (numOrient%/2)-1 do
+	   colpos% := ((icount%-1)/numcols%)*ydim%;                                     'when icount > numcols, start next row
+		rowpos% := ((icount%-1) - (( (icount%-1)/numcols%)*numcols%)) * xdim%;    '
+      View(psth%[i%]);
+	   Window(rowpos%,colpos%,rowpos%+xdim%,colpos%+ydim%);
+      WindowTitle$("Stim"+"  "+Str$(i%));
+		FontSet(3,6,0);
+		XScroller(0);
+		YAxisMode(3);
+		XAxisMode(3);
+ 		icount% := icount% + 1;
+   next;
+
+colpos% := (icount%/6)*winheight%;
+rowpos% := ((icount%-1) - ((icount%/6)*5)) * winwidth%; 
+
+View(RawTrace%);
+Window(rowpos%,colpos%,rowpos%+winwidth%,colpos%+winheight%);
+WindowTitle$("RawTrace");
+YAxisMode(3);
+XAxisMode(3);
+
+FrontView(RawTrace%);
+
+icount% := 1;
+   for i% := numOrient%/2 to numOrient%-1 do
+	   colpos% := ((icount%-1)/numcols%)*ydim%;                                     'when icount > numcols, start next row
+		rowpos% := ((icount%-1) - (( (icount%-1)/numcols%)*numcols%)) * xdim%;    '
+      View(psth%[i%]);
+	   Window(rowpos%,colpos%,rowpos%+xdim%,colpos%+ydim%);
+      WindowTitle$("Stim"+"  "+Str$(i%));
+		FontSet(3,6,0);
+		XScroller(0);
+		YAxisMode(3);
+		XAxisMode(3);
+ 		icount% := icount% + 1;
+   next;
+
+for i% := 1 to numOrient%-1 do
+   FrontView(psth%[i%]);
+next;
+
+FrontView(SweepCounter%);
+WindowTitle$("SweepCounter");
+WindowVisible(0);
+
+   View(FlashTuningPlot%);
+   DrawMode(0,1);
+   YAxisMode(3);
+   Window(0,2*winheight%,30,2*winheight%+40);
+   FrontView(FlashTuningPlot%);
+return 1;
+end;
+'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+func MyTile%()
+
+View(LogHandle()).Window(0,80,100,100);					'Display it at the bottom of the screen
+
+	icount% := 1;
+   for i% := 1 to (numOrient%/2)-1 do
+	   colpos% := ((icount%-1)/numcols%)*ydim%;                                     'when icount > numcols, start next row'
+		rowpos% := ((icount%-1) - (( (icount%-1)/numcols%)*numcols%)) * xdim%;    '
+      View(psth%[i%]).Window(rowpos%,colpos%,rowpos%+xdim%,colpos%+ydim%);
+ 		icount% := icount% + 1;
+   next;
+
+colpos% := (icount%/6)*winheight%;
+rowpos% := ((icount%-1) - ((icount%/6)*5)) * winwidth%; 
+
+View(RawTrace%);
+Window(rowpos%,colpos%,rowpos%+winwidth%,colpos%+winheight%);
+
+icount% := 1;
+   for i% := numOrient%/2 to numOrient%-1 do
+	   colpos% := ((icount%-1)/numcols%)*ydim%;                                     'when icount > numcols, start next row
+		rowpos% := ((icount%-1) - (( (icount%-1)/numcols%)*numcols%)) * xdim%;    '
+      View(psth%[i%]).Window(rowpos%,colpos%,rowpos%+xdim%,colpos%+ydim%);
+ 		icount% := icount% + 1;
+   next;
+
+   View(FlashTuningPlot%).Window(0,2*winheight%,30,2*winheight%+40);
+	View(data%).Window(30,2*winheight%,100,2*winheight%+40);
+
+return 1;						
+end;
+
+Proc ReMarkSpikes(thespikechan%)
+
+var t01%,t02%,t03%,t04%,t05%,t06%,t07%,t08%, t11%,t12%,t13%,t14%,t15%,t16%,t17%,t18%;       ' bounds for trigger window
+
+var ch%;
+
+var dummy1,dummy2;
+
+t01% := 1;
+t02% := -1;
+t03% := -1;
+t04% := -1;
+t05% := -1;
+t06% := -1;
+t07% := -1;
+t08% := -1;
+
+t11% := 2;
+t12% := -1;
+t13% := -1;
+t14% := -1;
+t15% := -1;
+t16% := -1;
+t17% := -1;
+t18% := -1;
+
+
+var DlgView%;
+
+DlgCreate("Combine Spike Markers:");
+DlgLabel(1,"Combine the following markers into 01:");
+DlgInteger(2,"", -1, 100);
+DlgInteger(3,"", -1, 100);
+DlgInteger(4,"", -1, 100);
+DlgInteger(5,"", -1, 100);
+DlgInteger(6,"", -1, 100);
+DlgInteger(7,"", -1, 100);
+DlgInteger(8,"", -1, 100);
+DlgLabel(9,"Combine the following markers into 02:");
+DlgInteger(10,"", -1, 100);
+DlgInteger(11,"", -1, 100);
+DlgInteger(12,"", -1, 100);
+DlgInteger(13,"", -1, 100);
+DlgInteger(14,"", -1, 100);
+DlgInteger(15,"", -1, 100);
+DlgInteger(16,"", -1, 100);
+DlgInteger(17,"", -1, 100);
+DlgView%:=DlgShow(dummy1,t01%,t02%,t03%,t04%,t05%,t06%,t07%,t08%,t11%,t12%,t13%,t14%,t15%,t16%,t17%,t18%);
+
+if t01%=1 then t01% := 101; endif
+if t02%=1 then t02% := 101; endif
+if t03%=1 then t03% := 101; endif
+if t04%=1 then t04% := 101; endif
+if t05%=1 then t05% := 101; endif
+if t06%=1 then t06% := 101; endif
+if t07%=1 then t07% := 101; endif
+if t08%=1 then t08% := 101; endif
+if t11%=1 then t11% := 101; endif
+if t12%=1 then t12% := 101; endif
+if t13%=1 then t13% := 101; endif
+if t14%=1 then t14% := 101; endif
+if t15%=1 then t15% := 101; endif
+if t16%=1 then t16% := 101; endif
+if t17%=1 then t17% := 101; endif
+if t18%=1 then t18% := 101; endif
+
+if t01%=2 then t01% := 102; endif
+if t02%=2 then t02% := 102; endif
+if t03%=2 then t03% := 102; endif
+if t04%=2 then t04% := 102; endif
+if t05%=2 then t05% := 102; endif
+if t06%=2 then t06% := 102; endif
+if t07%=2 then t07% := 102; endif
+if t08%=2 then t08% := 102; endif
+if t11%=2 then t11% := 102; endif
+if t12%=2 then t12% := 102; endif
+if t13%=2 then t13% := 102; endif
+if t14%=2 then t14% := 102; endif
+if t15%=2 then t15% := 102; endif
+if t16%=2 then t16% := 102; endif
+if t17%=2 then t17% := 102; endif
+if t18%=2 then t18% := 102; endif
+
+PrintLog(t01%," ",t02%," ",t03%," ",t04%," ",t05%," ",t06%," ",t07%," ",t08%);
+PrintLog(t11%," ",t12%," ",t13%," ",t14%," ",t15%," ",t16%," ",t17%," ",t18%);
+
+
+View(data%);
+
+' % change marker 1 to 101 and 2 to 102 so we can set other items to 01 or 02
+MarkMask(thespikechan%,-1,1,-1);  ' % exclude everything
+MarkMask(thespikechan%,0,0,-1);   ' 
+MarkMask(thespikechan%,0,1,1);
+MarkSet(thespikechan%,0,MaxTime(),101);
+MarkMask(thespikechan%,-1,1,-1);  ' % exclude everything
+MarkMask(thespikechan%,0,0,-1);   ' 
+MarkMask(thespikechan%,0,1,2);
+MarkSet(thespikechan%,0,MaxTime(),102);
+
+ ' % now set all indicated channels to 1
+MarkMask(thespikechan%,-1,1,-1);  ' % exclude everything
+MarkMask(thespikechan%,0,0,-1);   ' 
+
+if t01%>0 then	MarkMask(thespikechan%,0,1,t01%); ch%:=1; endif
+if t02%>0 then	MarkMask(thespikechan%,0,1,t02%); ch%:=1; endif
+if t03%>0 then	MarkMask(thespikechan%,0,1,t03%); ch%:=1; endif
+if t04%>0 then	MarkMask(thespikechan%,0,1,t04%); ch%:=1; endif
+if t05%>0 then	MarkMask(thespikechan%,0,1,t05%); ch%:=1; endif
+if t06%>0 then	MarkMask(thespikechan%,0,1,t06%); ch%:=1; endif
+if t07%>0 then	MarkMask(thespikechan%,0,1,t07%); ch%:=1; endif
+if t08%>0 then	MarkMask(thespikechan%,0,1,t08%); ch%:=1; endif
+
+MarkSet(thespikechan%,0,MaxTime(),1);
+
+
+ ' % now set all indicated channels to 1
+MarkMask(thespikechan%,-1,1,-1);  ' % exclude everything
+MarkMask(thespikechan%,0,0,-1);   ' 
+
+if t11%>0 then	MarkMask(thespikechan%,0,1,t11%); endif
+if t12%>0 then	MarkMask(thespikechan%,0,1,t12%); endif
+if t13%>0 then	MarkMask(thespikechan%,0,1,t13%); endif
+if t14%>0 then	MarkMask(thespikechan%,0,1,t14%); endif
+if t15%>0 then	MarkMask(thespikechan%,0,1,t15%); endif
+if t16%>0 then	MarkMask(thespikechan%,0,1,t16%); endif
+if t17%>0 then	MarkMask(thespikechan%,0,1,t17%); endif
+if t18%>0 then	MarkMask(thespikechan%,0,1,t18%); endif
+
+MarkSet(thespikechan%,0,MaxTime(),2);
+
+MarkMask(thespikechan%,-1,1,-1);  ' % exclude everything
+MarkMask(thespikechan%,0,0,-1);   '
+MarkMask(thespikechan%,0,1,-1);   ' % include everything
+
+end
