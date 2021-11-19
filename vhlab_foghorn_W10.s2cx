@@ -1,0 +1,1434 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CEDResources App="Spike2" AppVer="1012">
+	<Sample S2Ver="1012" ARange="5" Last="C:\Users\vhlab\Documents\MATLAB\tools\vhlab-Spike2Scripts-Spike2\vhlab_foghorn_W10.s2cx">
+		<!--Sampling configuration saved to C:\Users\vhlab\Documents\MATLAB\tools\vhlab-Spike2Scripts-Spike2\vhlab_foghorn_W10.s2cx on Tuesday, November 9, 2021 10:26:25 AM-->
+		<Chans IdealWMRate="20000">
+			<Chan id="0" Type="1" Title="Electrode" Traces="1" Rate="10000" ActRate="10000" Comment="Extracellular" Units=" Volt" Divide="2" AType="2" />
+			<Chan id="19" Type="6" Title="Spike detector" Traces="1" Rate="1000" ActRate="20000" Comment="Spike" Units=" Volt" Divide="0" />
+			<Chan id="21" Type="2" Title="Stim ON" Traces="1" Rate="50" ActRate="100" Comment="Stim ON" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="22" Type="3" Title="Frame Trigger" Port="1" Traces="1" Rate="250" ActRate="100" Comment="Frame Trigger" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="23" Type="3" Title="VertRef" Port="2" Traces="1" Rate="250" ActRate="100" Comment="Vertical refresh" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="24" Type="3" Title="Chan %c" Port="3" Traces="1" Rate="250" ActRate="100" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="25" Type="3" Title="2-Photon" Port="4" Traces="1" Rate="250" ActRate="100" Comment="Two Photon trigger" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="26" Type="3" Title="2-Photon" Port="5" Traces="1" Rate="250" ActRate="100" Comment="2nd 2-photon trigger channel" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="27" Type="3" Port="6" Traces="1" Rate="250" ActRate="100" Units=" Volt" Divide="0" />
+			<Chan id="28" Type="3" Port="7" Traces="1" Rate="250" ActRate="100" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+			<Chan id="29" Type="8" Title="TextMark" Traces="1" ActRate="100" Units=" Volt" Pts="80" Divide="0" />
+			<Chan id="30" Type="5" Title="Keyboard" Traces="1" ActRate="100" Units=" Volt" Divide="0" />
+			<Chan id="31" Type="5" Title="DigMark" Traces="1" Rate="50" ActRate="100" Units=" Volt" DBounce="0.10000000149011612" Divide="0" />
+		</Chans>
+		<Resol tpa="5" recalc="0" Assume1401="2" OptMeth="1" OptUSFrom="2" OptUSTo="50" GrpRates="1" />
+		<Mode For="60" EveryUn="1">
+			<Trigs id="0" Chan="-4" Code="-1" Post="1" Chans="-1" />
+			<Trigs id="1" Chan="-4" Code="-1" Post="1" Chans="-1" />
+			<Trigs id="2" Chan="-4" Code="-1" Post="1" Chans="-1" />
+			<Trigs id="3" Chan="-4" Code="-1" Post="1" Chans="-1" />
+		</Mode>
+		<Seq DacMask="3" DigMask="3" DacUnits="V">
+			<Pulses States="27" />
+		</Seq>
+		<PortLabels DACCount="0" DIGCount="0" />
+		<Waves />
+		<Auto />
+		<Script />
+		<CondPorts Count="0" />
+		<ForceOP />
+		<Talkers />
+		<SampCtl t="139" b="0" l="2252" r="2" />
+		<SeqCtl t="109" b="0" l="2252" r="2" />
+		<SampSta t="169" b="0" l="2252" r="2" />
+	</Sample>
+	<DocTime>
+		<Templates>
+			<TempOnline>
+				<Ch19 id="19" NumTmpl="15" NumPts="28" PropIn="0.6" RemDC="0" IgnoreO="1" TrackNum="64" AmpErr="0.32000732421875" Decay="50" TimeC="9" Flags="8" YTop="876" NumTrace="1" CWPre="10" CWPts="32" Int="4.9999999999999996e-05" Units=" Volt" TrigOff="8">
+					<e TrLow="-748" TrHi="438" LimLow="-626" LimHi="626" />
+					<t id="0" Pts="28" Trs="1" MaxErr="30138" NumSp="1" Code="1">
+						<t>
+							<s Val="-1591" Err="584" Min="584" />
+							<s Val="-1829" Err="607" Min="607" />
+							<s Val="-1464" Err="559" Min="559" />
+							<s Val="-1334" Err="571" Min="571" />
+							<s Val="-1269" Err="569" Min="569" />
+							<s Val="-1158" Err="560" Min="560" />
+							<s Val="-1080" Err="543" Min="543" />
+							<s Val="-985" Err="540" Min="540" />
+							<s Val="-902" Err="512" Min="512" />
+							<s Val="-795" Err="507" Min="507" />
+							<s Val="-586" Err="514" Min="514" />
+							<s Val="-561" Err="519" Min="519" />
+							<s Val="-350" Err="580" Min="580" />
+							<s Val="-249" Err="604" Min="604" />
+							<s Val="-104" Err="678" Min="678" />
+							<s Val="33" Err="713" Min="713" />
+							<s Val="128" Err="758" Min="758" />
+							<s Val="267" Err="851" Min="851" />
+							<s Val="328" Err="878" Min="878" />
+							<s Val="429" Err="954" Min="954" />
+							<s Val="529" Err="1038" Min="1038" />
+							<s Val="534" Err="1044" Min="1044" />
+							<s Val="620" Err="1087" Min="1087" />
+							<s Val="673" Err="1109" Min="1109" />
+							<s Val="719" Err="1106" Min="1106" />
+							<s Val="734" Err="1102" Min="1102" />
+							<s Val="744" Err="1073" Min="1073" />
+							<s Val="740" Err="1046" Min="1046" />
+						</t>
+					</t>
+					<t id="1" Pts="28" Trs="1" MaxErr="33856" NumSp="1" Code="2">
+						<t>
+							<s Val="-2201" Err="849" Min="849" />
+							<s Val="-864" Err="597" Min="597" />
+							<s Val="436" Err="623" Min="623" />
+							<s Val="1293" Err="829" Min="829" />
+							<s Val="1607" Err="861" Min="861" />
+							<s Val="1557" Err="819" Min="819" />
+							<s Val="1431" Err="787" Min="787" />
+							<s Val="1308" Err="792" Min="792" />
+							<s Val="1223" Err="843" Min="843" />
+							<s Val="1170" Err="870" Min="870" />
+							<s Val="1131" Err="896" Min="896" />
+							<s Val="1056" Err="939" Min="939" />
+							<s Val="1007" Err="963" Min="963" />
+							<s Val="937" Err="948" Min="948" />
+							<s Val="892" Err="991" Min="991" />
+							<s Val="817" Err="962" Min="962" />
+							<s Val="779" Err="951" Min="951" />
+							<s Val="696" Err="916" Min="916" />
+							<s Val="674" Err="920" Min="920" />
+							<s Val="620" Err="898" Min="898" />
+							<s Val="563" Err="884" Min="884" />
+							<s Val="513" Err="884" Min="884" />
+							<s Val="476" Err="856" Min="856" />
+							<s Val="437" Err="816" Min="816" />
+							<s Val="389" Err="801" Min="801" />
+							<s Val="349" Err="791" Min="791" />
+							<s Val="302" Err="791" Min="791" />
+							<s Val="281" Err="779" Min="779" />
+						</t>
+					</t>
+					<t id="2" Pts="28" Trs="1" MaxErr="31957" NumSp="1" Code="3">
+						<t>
+							<s Val="-1994" Err="584" Min="584" />
+							<s Val="-2214" Err="600" Min="600" />
+							<s Val="-1829" Err="495" Min="495" />
+							<s Val="-1701" Err="515" Min="515" />
+							<s Val="-1583" Err="552" Min="552" />
+							<s Val="-1478" Err="610" Min="610" />
+							<s Val="-1332" Err="637" Min="637" />
+							<s Val="-1256" Err="702" Min="702" />
+							<s Val="-1078" Err="745" Min="745" />
+							<s Val="-985" Err="772" Min="772" />
+							<s Val="-801" Err="760" Min="760" />
+							<s Val="-732" Err="773" Min="773" />
+							<s Val="-539" Err="808" Min="808" />
+							<s Val="-392" Err="800" Min="800" />
+							<s Val="-192" Err="819" Min="819" />
+							<s Val="-48" Err="810" Min="810" />
+							<s Val="127" Err="804" Min="804" />
+							<s Val="275" Err="840" Min="840" />
+							<s Val="430" Err="817" Min="817" />
+							<s Val="580" Err="845" Min="845" />
+							<s Val="787" Err="896" Min="896" />
+							<s Val="833" Err="921" Min="921" />
+							<s Val="1006" Err="976" Min="976" />
+							<s Val="1071" Err="997" Min="997" />
+							<s Val="1192" Err="1061" Min="1061" />
+							<s Val="1249" Err="1082" Min="1082" />
+							<s Val="1299" Err="1128" Min="1128" />
+							<s Val="1301" Err="1157" Min="1157" />
+						</t>
+					</t>
+					<t id="3" Pts="28" Trs="1" MaxErr="33139" NumSp="1" Code="4">
+						<t>
+							<s Val="-1972" Err="689" Min="689" />
+							<s Val="-1069" Err="493" Min="493" />
+							<s Val="-34" Err="601" Min="601" />
+							<s Val="658" Err="843" Min="843" />
+							<s Val="941" Err="895" Min="895" />
+							<s Val="916" Err="838" Min="838" />
+							<s Val="838" Err="781" Min="781" />
+							<s Val="779" Err="769" Min="769" />
+							<s Val="715" Err="764" Min="764" />
+							<s Val="686" Err="807" Min="807" />
+							<s Val="648" Err="842" Min="842" />
+							<s Val="629" Err="878" Min="878" />
+							<s Val="628" Err="907" Min="907" />
+							<s Val="618" Err="901" Min="901" />
+							<s Val="634" Err="907" Min="907" />
+							<s Val="614" Err="889" Min="889" />
+							<s Val="610" Err="892" Min="892" />
+							<s Val="603" Err="888" Min="888" />
+							<s Val="583" Err="893" Min="893" />
+							<s Val="589" Err="898" Min="898" />
+							<s Val="592" Err="914" Min="914" />
+							<s Val="554" Err="896" Min="896" />
+							<s Val="550" Err="883" Min="883" />
+							<s Val="540" Err="874" Min="874" />
+							<s Val="531" Err="875" Min="875" />
+							<s Val="503" Err="866" Min="866" />
+							<s Val="481" Err="830" Min="830" />
+							<s Val="467" Err="833" Min="833" />
+						</t>
+					</t>
+					<t id="4" Pts="28" Trs="1" MaxErr="29603" NumSp="1" Code="5">
+						<t>
+							<s Val="-1907" Err="553" Min="553" />
+							<s Val="-2162" Err="495" Min="495" />
+							<s Val="-1791" Err="478" Min="478" />
+							<s Val="-1599" Err="485" Min="485" />
+							<s Val="-1319" Err="495" Min="495" />
+							<s Val="-1098" Err="505" Min="505" />
+							<s Val="-885" Err="511" Min="511" />
+							<s Val="-705" Err="516" Min="516" />
+							<s Val="-553" Err="519" Min="519" />
+							<s Val="-371" Err="524" Min="524" />
+							<s Val="-158" Err="551" Min="551" />
+							<s Val="-111" Err="570" Min="570" />
+							<s Val="128" Err="622" Min="622" />
+							<s Val="237" Err="673" Min="673" />
+							<s Val="369" Err="722" Min="722" />
+							<s Val="451" Err="751" Min="751" />
+							<s Val="525" Err="859" Min="859" />
+							<s Val="580" Err="903" Min="903" />
+							<s Val="598" Err="950" Min="950" />
+							<s Val="626" Err="979" Min="979" />
+							<s Val="654" Err="1028" Min="1028" />
+							<s Val="601" Err="1060" Min="1060" />
+							<s Val="666" Err="1089" Min="1089" />
+							<s Val="591" Err="1059" Min="1059" />
+							<s Val="580" Err="1053" Min="1053" />
+							<s Val="526" Err="1008" Min="1008" />
+							<s Val="487" Err="948" Min="948" />
+							<s Val="432" Err="900" Min="900" />
+						</t>
+					</t>
+					<t id="5" Pts="28" Trs="1" MaxErr="31397" NumSp="1" Code="6">
+						<t>
+							<s Val="-2118" Err="526" Min="526" />
+							<s Val="-2098" Err="519" Min="519" />
+							<s Val="-1839" Err="514" Min="514" />
+							<s Val="-1654" Err="510" Min="510" />
+							<s Val="-1436" Err="510" Min="510" />
+							<s Val="-1180" Err="510" Min="510" />
+							<s Val="-895" Err="510" Min="510" />
+							<s Val="-573" Err="510" Min="510" />
+							<s Val="-211" Err="513" Min="513" />
+							<s Val="75" Err="530" Min="530" />
+							<s Val="416" Err="572" Min="572" />
+							<s Val="695" Err="621" Min="621" />
+							<s Val="944" Err="697" Min="697" />
+							<s Val="1172" Err="746" Min="746" />
+							<s Val="1368" Err="820" Min="820" />
+							<s Val="1511" Err="897" Min="897" />
+							<s Val="1597" Err="968" Min="968" />
+							<s Val="1671" Err="1031" Min="1031" />
+							<s Val="1702" Err="1076" Min="1076" />
+							<s Val="1717" Err="1103" Min="1103" />
+							<s Val="1709" Err="1127" Min="1127" />
+							<s Val="1624" Err="1116" Min="1116" />
+							<s Val="1530" Err="1142" Min="1142" />
+							<s Val="1374" Err="1101" Min="1101" />
+							<s Val="1225" Err="1053" Min="1053" />
+							<s Val="1062" Err="1002" Min="1002" />
+							<s Val="891" Err="946" Min="946" />
+							<s Val="735" Err="881" Min="881" />
+						</t>
+					</t>
+					<t id="6" Pts="28" Trs="1" MaxErr="33291" NumSp="1" Code="7">
+						<t>
+							<s Val="-2238" Err="574" Min="574" />
+							<s Val="-2321" Err="569" Min="569" />
+							<s Val="-1855" Err="480" Min="480" />
+							<s Val="-1595" Err="529" Min="529" />
+							<s Val="-1429" Err="666" Min="666" />
+							<s Val="-1247" Err="732" Min="732" />
+							<s Val="-1076" Err="858" Min="858" />
+							<s Val="-962" Err="960" Min="960" />
+							<s Val="-787" Err="960" Min="960" />
+							<s Val="-639" Err="959" Min="959" />
+							<s Val="-439" Err="962" Min="962" />
+							<s Val="-360" Err="963" Min="963" />
+							<s Val="-171" Err="961" Min="961" />
+							<s Val="-26" Err="959" Min="959" />
+							<s Val="128" Err="928" Min="928" />
+							<s Val="306" Err="881" Min="881" />
+							<s Val="446" Err="835" Min="835" />
+							<s Val="557" Err="801" Min="801" />
+							<s Val="710" Err="775" Min="775" />
+							<s Val="867" Err="754" Min="754" />
+							<s Val="997" Err="794" Min="794" />
+							<s Val="1082" Err="829" Min="829" />
+							<s Val="1231" Err="900" Min="900" />
+							<s Val="1319" Err="961" Min="961" />
+							<s Val="1370" Err="964" Min="964" />
+							<s Val="1395" Err="964" Min="964" />
+							<s Val="1419" Err="964" Min="964" />
+							<s Val="1381" Err="964" Min="964" />
+						</t>
+					</t>
+					<t id="7" Pts="28" Trs="1" MaxErr="30748" NumSp="1" Code="8">
+						<t>
+							<s Val="-3279" Err="939" Min="939" />
+							<s Val="-2090" Err="853" Min="853" />
+							<s Val="-711" Err="504" Min="504" />
+							<s Val="346" Err="640" Min="640" />
+							<s Val="1021" Err="850" Min="850" />
+							<s Val="1379" Err="839" Min="839" />
+							<s Val="1566" Err="699" Min="699" />
+							<s Val="1672" Err="604" Min="604" />
+							<s Val="1728" Err="624" Min="624" />
+							<s Val="1830" Err="668" Min="668" />
+							<s Val="1878" Err="762" Min="762" />
+							<s Val="1894" Err="845" Min="845" />
+							<s Val="1904" Err="944" Min="944" />
+							<s Val="1890" Err="979" Min="979" />
+							<s Val="1873" Err="987" Min="987" />
+							<s Val="1794" Err="1019" Min="1019" />
+							<s Val="1692" Err="987" Min="987" />
+							<s Val="1588" Err="944" Min="944" />
+							<s Val="1424" Err="917" Min="917" />
+							<s Val="1298" Err="834" Min="834" />
+							<s Val="1168" Err="804" Min="804" />
+							<s Val="1042" Err="739" Min="739" />
+							<s Val="890" Err="696" Min="696" />
+							<s Val="748" Err="628" Min="628" />
+							<s Val="683" Err="579" Min="579" />
+							<s Val="517" Err="586" Min="586" />
+							<s Val="406" Err="587" Min="587" />
+							<s Val="340" Err="563" Min="563" />
+						</t>
+					</t>
+					<t id="8" Pts="28" Trs="1" MaxErr="55000" NumSp="1" Code="9">
+						<t>
+							<s Val="-14756" Err="1416" Min="1416" />
+							<s Val="-10307" Err="2183" Min="2183" />
+							<s Val="-5707" Err="1405" Min="1405" />
+							<s Val="-2151" Err="1354" Min="1354" />
+							<s Val="497" Err="1354" Min="1354" />
+							<s Val="2326" Err="1354" Min="1354" />
+							<s Val="3602" Err="1354" Min="1354" />
+							<s Val="4430" Err="1354" Min="1354" />
+							<s Val="4837" Err="1354" Min="1354" />
+							<s Val="5139" Err="1354" Min="1354" />
+							<s Val="5652" Err="1354" Min="1354" />
+							<s Val="6132" Err="1354" Min="1354" />
+							<s Val="6599" Err="1354" Min="1354" />
+							<s Val="6846" Err="1354" Min="1354" />
+							<s Val="7106" Err="1354" Min="1354" />
+							<s Val="7057" Err="1354" Min="1354" />
+							<s Val="6992" Err="1354" Min="1354" />
+							<s Val="6517" Err="1354" Min="1354" />
+							<s Val="5762" Err="1354" Min="1354" />
+							<s Val="5209" Err="1354" Min="1354" />
+							<s Val="4550" Err="1354" Min="1354" />
+							<s Val="3971" Err="1354" Min="1354" />
+							<s Val="3518" Err="1354" Min="1354" />
+							<s Val="2965" Err="1354" Min="1354" />
+							<s Val="2603" Err="1354" Min="1354" />
+							<s Val="2467" Err="1354" Min="1354" />
+							<s Val="1919" Err="1354" Min="1354" />
+							<s Val="1605" Err="1354" Min="1354" />
+						</t>
+					</t>
+					<t id="9" Pts="28" Trs="1" MaxErr="72297" NumSp="1" Code="10">
+						<t>
+							<s Val="-14838" Err="1831" Min="1831" />
+							<s Val="-12440" Err="1831" Min="1831" />
+							<s Val="-9426" Err="1831" Min="1831" />
+							<s Val="-9078" Err="1831" Min="1831" />
+							<s Val="-8735" Err="1831" Min="1831" />
+							<s Val="-8376" Err="1831" Min="1831" />
+							<s Val="-7112" Err="1831" Min="1831" />
+							<s Val="-6135" Err="1831" Min="1831" />
+							<s Val="-5123" Err="1831" Min="1831" />
+							<s Val="-5314" Err="1831" Min="1831" />
+							<s Val="-5254" Err="1831" Min="1831" />
+							<s Val="-4720" Err="1831" Min="1831" />
+							<s Val="-3472" Err="1831" Min="1831" />
+							<s Val="-2764" Err="1831" Min="1831" />
+							<s Val="-2603" Err="1831" Min="1831" />
+							<s Val="-2788" Err="1831" Min="1831" />
+							<s Val="-2293" Err="1831" Min="1831" />
+							<s Val="-1554" Err="1831" Min="1831" />
+							<s Val="-1111" Err="1831" Min="1831" />
+							<s Val="-1331" Err="1831" Min="1831" />
+							<s Val="-1090" Err="1831" Min="1831" />
+							<s Val="-943" Err="1831" Min="1831" />
+							<s Val="-546" Err="1831" Min="1831" />
+							<s Val="-645" Err="1831" Min="1831" />
+							<s Val="-515" Err="1831" Min="1831" />
+							<s Val="-506" Err="1831" Min="1831" />
+							<s Val="224" Err="1831" Min="1831" />
+							<s Val="75" Err="1831" Min="1831" />
+						</t>
+					</t>
+					<t id="10" Pts="28" Trs="1" MaxErr="134425" NumSp="1" Code="11">
+						<t>
+							<s Val="21376" Err="3410" Min="3410" />
+							<s Val="21335" Err="3410" Min="3410" />
+							<s Val="21295" Err="3410" Min="3410" />
+							<s Val="21253" Err="3410" Min="3410" />
+							<s Val="21213" Err="3410" Min="3410" />
+							<s Val="21172" Err="3410" Min="3410" />
+							<s Val="21128" Err="3410" Min="3410" />
+							<s Val="21088" Err="3410" Min="3410" />
+							<s Val="21047" Err="3410" Min="3410" />
+							<s Val="21004" Err="3410" Min="3410" />
+							<s Val="20960" Err="3410" Min="3410" />
+							<s Val="20918" Err="3410" Min="3410" />
+							<s Val="20884" Err="3410" Min="3410" />
+							<s Val="20844" Err="3410" Min="3410" />
+							<s Val="20802" Err="3410" Min="3410" />
+							<s Val="16473" Err="3410" Min="3410" />
+							<s Val="12657" Err="3410" Min="3410" />
+							<s Val="10169" Err="3410" Min="3410" />
+							<s Val="8042" Err="3410" Min="3410" />
+							<s Val="5815" Err="3410" Min="3410" />
+							<s Val="2194" Err="3410" Min="3410" />
+							<s Val="728" Err="3410" Min="3410" />
+							<s Val="-363" Err="3410" Min="3410" />
+							<s Val="-1595" Err="3410" Min="3410" />
+							<s Val="-2876" Err="3410" Min="3410" />
+							<s Val="-4418" Err="3410" Min="3410" />
+							<s Val="-5406" Err="3410" Min="3410" />
+							<s Val="-6016" Err="3410" Min="3410" />
+						</t>
+					</t>
+					<t id="11" Pts="28" Trs="1" MaxErr="51797" NumSp="1" Code="12">
+						<t>
+							<s Val="-15470" Err="1296" Min="1296" />
+							<s Val="-8121" Err="1296" Min="1296" />
+							<s Val="-2446" Err="1296" Min="1296" />
+							<s Val="2107" Err="1296" Min="1296" />
+							<s Val="4300" Err="1296" Min="1296" />
+							<s Val="5342" Err="1296" Min="1296" />
+							<s Val="2059" Err="1296" Min="1296" />
+							<s Val="1173" Err="1296" Min="1296" />
+							<s Val="2065" Err="1296" Min="1296" />
+							<s Val="422" Err="1296" Min="1296" />
+							<s Val="-983" Err="1296" Min="1296" />
+							<s Val="1220" Err="1296" Min="1296" />
+							<s Val="1041" Err="1296" Min="1296" />
+							<s Val="1509" Err="1296" Min="1296" />
+							<s Val="1811" Err="1296" Min="1296" />
+							<s Val="3173" Err="1296" Min="1296" />
+							<s Val="6072" Err="1296" Min="1296" />
+							<s Val="7477" Err="1296" Min="1296" />
+							<s Val="7053" Err="1296" Min="1296" />
+							<s Val="6781" Err="1296" Min="1296" />
+							<s Val="7178" Err="1296" Min="1296" />
+							<s Val="7606" Err="1296" Min="1296" />
+							<s Val="8469" Err="1296" Min="1296" />
+							<s Val="8490" Err="1296" Min="1296" />
+							<s Val="7859" Err="1296" Min="1296" />
+							<s Val="7514" Err="1296" Min="1296" />
+							<s Val="6540" Err="1296" Min="1296" />
+							<s Val="5448" Err="1296" Min="1296" />
+						</t>
+					</t>
+					<t id="12" Pts="28" Trs="1" MaxErr="49916" NumSp="1" Code="13">
+						<t>
+							<s Val="-15576" Err="1249" Min="1249" />
+							<s Val="-9098" Err="1249" Min="1249" />
+							<s Val="-4701" Err="1249" Min="1249" />
+							<s Val="-1864" Err="1249" Min="1249" />
+							<s Val="563" Err="1249" Min="1249" />
+							<s Val="2175" Err="1249" Min="1249" />
+							<s Val="2417" Err="1249" Min="1249" />
+							<s Val="2980" Err="1249" Min="1249" />
+							<s Val="4003" Err="1249" Min="1249" />
+							<s Val="5049" Err="1249" Min="1249" />
+							<s Val="4956" Err="1249" Min="1249" />
+							<s Val="4069" Err="1249" Min="1249" />
+							<s Val="5581" Err="1249" Min="1249" />
+							<s Val="6139" Err="1249" Min="1249" />
+							<s Val="6397" Err="1249" Min="1249" />
+							<s Val="6062" Err="1249" Min="1249" />
+							<s Val="4545" Err="1249" Min="1249" />
+							<s Val="1165" Err="1249" Min="1249" />
+							<s Val="-1878" Err="1249" Min="1249" />
+							<s Val="-1053" Err="1249" Min="1249" />
+							<s Val="1325" Err="1249" Min="1249" />
+							<s Val="4163" Err="1249" Min="1249" />
+							<s Val="6021" Err="1249" Min="1249" />
+							<s Val="6013" Err="1249" Min="1249" />
+							<s Val="4798" Err="1249" Min="1249" />
+							<s Val="5072" Err="1249" Min="1249" />
+							<s Val="4669" Err="1249" Min="1249" />
+							<s Val="3653" Err="1249" Min="1249" />
+						</t>
+					</t>
+					<t id="13" Pts="28" Trs="1" MaxErr="133489" NumSp="1" Code="14">
+						<t>
+							<s Val="-21261" Err="3391" Min="3391" />
+							<s Val="-21217" Err="3391" Min="3391" />
+							<s Val="-21174" Err="3391" Min="3391" />
+							<s Val="-21130" Err="3391" Min="3391" />
+							<s Val="-21100" Err="3391" Min="3391" />
+							<s Val="-21052" Err="3391" Min="3391" />
+							<s Val="-21019" Err="3391" Min="3391" />
+							<s Val="-20973" Err="3391" Min="3391" />
+							<s Val="-20929" Err="3391" Min="3391" />
+							<s Val="-20892" Err="3391" Min="3391" />
+							<s Val="-20847" Err="3391" Min="3391" />
+							<s Val="-20812" Err="3391" Min="3391" />
+							<s Val="-20768" Err="3391" Min="3391" />
+							<s Val="-20725" Err="3391" Min="3391" />
+							<s Val="-20688" Err="3391" Min="3391" />
+							<s Val="-20641" Err="3391" Min="3391" />
+							<s Val="-20604" Err="3391" Min="3391" />
+							<s Val="-20561" Err="3391" Min="3391" />
+							<s Val="-20522" Err="3391" Min="3391" />
+							<s Val="-20484" Err="3391" Min="3391" />
+							<s Val="-20440" Err="3391" Min="3391" />
+							<s Val="-20405" Err="3391" Min="3391" />
+							<s Val="-20365" Err="3391" Min="3391" />
+							<s Val="-20322" Err="3391" Min="3391" />
+							<s Val="-20285" Err="3391" Min="3391" />
+							<s Val="-20241" Err="3391" Min="3391" />
+							<s Val="-20206" Err="3391" Min="3391" />
+							<s Val="-19978" Err="3391" Min="3391" />
+						</t>
+					</t>
+					<t id="14" Pts="28" Trs="1" MaxErr="56097" NumSp="1" Code="15">
+						<t>
+							<s Val="-13709" Err="1408" Min="1408" />
+							<s Val="-9112" Err="1408" Min="1408" />
+							<s Val="-2435" Err="1408" Min="1408" />
+							<s Val="1514" Err="1408" Min="1408" />
+							<s Val="2351" Err="1408" Min="1408" />
+							<s Val="2957" Err="1408" Min="1408" />
+							<s Val="4648" Err="1408" Min="1408" />
+							<s Val="7276" Err="1408" Min="1408" />
+							<s Val="9255" Err="1408" Min="1408" />
+							<s Val="9422" Err="1408" Min="1408" />
+							<s Val="9036" Err="1408" Min="1408" />
+							<s Val="7488" Err="1408" Min="1408" />
+							<s Val="5171" Err="1408" Min="1408" />
+							<s Val="5277" Err="1408" Min="1408" />
+							<s Val="5677" Err="1408" Min="1408" />
+							<s Val="5975" Err="1408" Min="1408" />
+							<s Val="6792" Err="1408" Min="1408" />
+							<s Val="5575" Err="1408" Min="1408" />
+							<s Val="3878" Err="1408" Min="1408" />
+							<s Val="3766" Err="1408" Min="1408" />
+							<s Val="3908" Err="1408" Min="1408" />
+							<s Val="4491" Err="1408" Min="1408" />
+							<s Val="4171" Err="1408" Min="1408" />
+							<s Val="4176" Err="1408" Min="1408" />
+							<s Val="3150" Err="1408" Min="1408" />
+							<s Val="2571" Err="1408" Min="1408" />
+							<s Val="1092" Err="1408" Min="1408" />
+							<s Val="179" Err="1408" Min="1408" />
+						</t>
+					</t>
+				</Ch19>
+			</TempOnline>
+			<TempOffline>
+				<Ch19 id="19" NumTmpl="15" NumPts="28" PropIn="0.6" RemDC="0" IgnoreO="1" TrackNum="64" AmpErr="0.32000732421875" Decay="50" TimeC="9" Flags="8" YTop="876" NumTrace="1" CWPre="10" CWPts="32" Int="4.9999999999999996e-05" Units=" Volt" TrigOff="8">
+					<e TrLow="-748" TrHi="438" LimLow="-626" LimHi="626" />
+					<t id="0" Pts="28" Trs="1" MaxErr="30138" NumSp="1" Code="1">
+						<t>
+							<s Val="-1591" Err="584" Min="584" />
+							<s Val="-1829" Err="607" Min="607" />
+							<s Val="-1464" Err="559" Min="559" />
+							<s Val="-1334" Err="571" Min="571" />
+							<s Val="-1269" Err="569" Min="569" />
+							<s Val="-1158" Err="560" Min="560" />
+							<s Val="-1080" Err="543" Min="543" />
+							<s Val="-985" Err="540" Min="540" />
+							<s Val="-902" Err="512" Min="512" />
+							<s Val="-795" Err="507" Min="507" />
+							<s Val="-586" Err="514" Min="514" />
+							<s Val="-561" Err="519" Min="519" />
+							<s Val="-350" Err="580" Min="580" />
+							<s Val="-249" Err="604" Min="604" />
+							<s Val="-104" Err="678" Min="678" />
+							<s Val="33" Err="713" Min="713" />
+							<s Val="128" Err="758" Min="758" />
+							<s Val="267" Err="851" Min="851" />
+							<s Val="328" Err="878" Min="878" />
+							<s Val="429" Err="954" Min="954" />
+							<s Val="529" Err="1038" Min="1038" />
+							<s Val="534" Err="1044" Min="1044" />
+							<s Val="620" Err="1087" Min="1087" />
+							<s Val="673" Err="1109" Min="1109" />
+							<s Val="719" Err="1106" Min="1106" />
+							<s Val="734" Err="1102" Min="1102" />
+							<s Val="744" Err="1073" Min="1073" />
+							<s Val="740" Err="1046" Min="1046" />
+						</t>
+					</t>
+					<t id="1" Pts="28" Trs="1" MaxErr="33856" NumSp="1" Code="2">
+						<t>
+							<s Val="-2201" Err="849" Min="849" />
+							<s Val="-864" Err="597" Min="597" />
+							<s Val="436" Err="623" Min="623" />
+							<s Val="1293" Err="829" Min="829" />
+							<s Val="1607" Err="861" Min="861" />
+							<s Val="1557" Err="819" Min="819" />
+							<s Val="1431" Err="787" Min="787" />
+							<s Val="1308" Err="792" Min="792" />
+							<s Val="1223" Err="843" Min="843" />
+							<s Val="1170" Err="870" Min="870" />
+							<s Val="1131" Err="896" Min="896" />
+							<s Val="1056" Err="939" Min="939" />
+							<s Val="1007" Err="963" Min="963" />
+							<s Val="937" Err="948" Min="948" />
+							<s Val="892" Err="991" Min="991" />
+							<s Val="817" Err="962" Min="962" />
+							<s Val="779" Err="951" Min="951" />
+							<s Val="696" Err="916" Min="916" />
+							<s Val="674" Err="920" Min="920" />
+							<s Val="620" Err="898" Min="898" />
+							<s Val="563" Err="884" Min="884" />
+							<s Val="513" Err="884" Min="884" />
+							<s Val="476" Err="856" Min="856" />
+							<s Val="437" Err="816" Min="816" />
+							<s Val="389" Err="801" Min="801" />
+							<s Val="349" Err="791" Min="791" />
+							<s Val="302" Err="791" Min="791" />
+							<s Val="281" Err="779" Min="779" />
+						</t>
+					</t>
+					<t id="2" Pts="28" Trs="1" MaxErr="31957" NumSp="1" Code="3">
+						<t>
+							<s Val="-1994" Err="584" Min="584" />
+							<s Val="-2214" Err="600" Min="600" />
+							<s Val="-1829" Err="495" Min="495" />
+							<s Val="-1701" Err="515" Min="515" />
+							<s Val="-1583" Err="552" Min="552" />
+							<s Val="-1478" Err="610" Min="610" />
+							<s Val="-1332" Err="637" Min="637" />
+							<s Val="-1256" Err="702" Min="702" />
+							<s Val="-1078" Err="745" Min="745" />
+							<s Val="-985" Err="772" Min="772" />
+							<s Val="-801" Err="760" Min="760" />
+							<s Val="-732" Err="773" Min="773" />
+							<s Val="-539" Err="808" Min="808" />
+							<s Val="-392" Err="800" Min="800" />
+							<s Val="-192" Err="819" Min="819" />
+							<s Val="-48" Err="810" Min="810" />
+							<s Val="127" Err="804" Min="804" />
+							<s Val="275" Err="840" Min="840" />
+							<s Val="430" Err="817" Min="817" />
+							<s Val="580" Err="845" Min="845" />
+							<s Val="787" Err="896" Min="896" />
+							<s Val="833" Err="921" Min="921" />
+							<s Val="1006" Err="976" Min="976" />
+							<s Val="1071" Err="997" Min="997" />
+							<s Val="1192" Err="1061" Min="1061" />
+							<s Val="1249" Err="1082" Min="1082" />
+							<s Val="1299" Err="1128" Min="1128" />
+							<s Val="1301" Err="1157" Min="1157" />
+						</t>
+					</t>
+					<t id="3" Pts="28" Trs="1" MaxErr="33139" NumSp="1" Code="4">
+						<t>
+							<s Val="-1972" Err="689" Min="689" />
+							<s Val="-1069" Err="493" Min="493" />
+							<s Val="-34" Err="601" Min="601" />
+							<s Val="658" Err="843" Min="843" />
+							<s Val="941" Err="895" Min="895" />
+							<s Val="916" Err="838" Min="838" />
+							<s Val="838" Err="781" Min="781" />
+							<s Val="779" Err="769" Min="769" />
+							<s Val="715" Err="764" Min="764" />
+							<s Val="686" Err="807" Min="807" />
+							<s Val="648" Err="842" Min="842" />
+							<s Val="629" Err="878" Min="878" />
+							<s Val="628" Err="907" Min="907" />
+							<s Val="618" Err="901" Min="901" />
+							<s Val="634" Err="907" Min="907" />
+							<s Val="614" Err="889" Min="889" />
+							<s Val="610" Err="892" Min="892" />
+							<s Val="603" Err="888" Min="888" />
+							<s Val="583" Err="893" Min="893" />
+							<s Val="589" Err="898" Min="898" />
+							<s Val="592" Err="914" Min="914" />
+							<s Val="554" Err="896" Min="896" />
+							<s Val="550" Err="883" Min="883" />
+							<s Val="540" Err="874" Min="874" />
+							<s Val="531" Err="875" Min="875" />
+							<s Val="503" Err="866" Min="866" />
+							<s Val="481" Err="830" Min="830" />
+							<s Val="467" Err="833" Min="833" />
+						</t>
+					</t>
+					<t id="4" Pts="28" Trs="1" MaxErr="29603" NumSp="1" Code="5">
+						<t>
+							<s Val="-1907" Err="553" Min="553" />
+							<s Val="-2162" Err="495" Min="495" />
+							<s Val="-1791" Err="478" Min="478" />
+							<s Val="-1599" Err="485" Min="485" />
+							<s Val="-1319" Err="495" Min="495" />
+							<s Val="-1098" Err="505" Min="505" />
+							<s Val="-885" Err="511" Min="511" />
+							<s Val="-705" Err="516" Min="516" />
+							<s Val="-553" Err="519" Min="519" />
+							<s Val="-371" Err="524" Min="524" />
+							<s Val="-158" Err="551" Min="551" />
+							<s Val="-111" Err="570" Min="570" />
+							<s Val="128" Err="622" Min="622" />
+							<s Val="237" Err="673" Min="673" />
+							<s Val="369" Err="722" Min="722" />
+							<s Val="451" Err="751" Min="751" />
+							<s Val="525" Err="859" Min="859" />
+							<s Val="580" Err="903" Min="903" />
+							<s Val="598" Err="950" Min="950" />
+							<s Val="626" Err="979" Min="979" />
+							<s Val="654" Err="1028" Min="1028" />
+							<s Val="601" Err="1060" Min="1060" />
+							<s Val="666" Err="1089" Min="1089" />
+							<s Val="591" Err="1059" Min="1059" />
+							<s Val="580" Err="1053" Min="1053" />
+							<s Val="526" Err="1008" Min="1008" />
+							<s Val="487" Err="948" Min="948" />
+							<s Val="432" Err="900" Min="900" />
+						</t>
+					</t>
+					<t id="5" Pts="28" Trs="1" MaxErr="31397" NumSp="1" Code="6">
+						<t>
+							<s Val="-2118" Err="526" Min="526" />
+							<s Val="-2098" Err="519" Min="519" />
+							<s Val="-1839" Err="514" Min="514" />
+							<s Val="-1654" Err="510" Min="510" />
+							<s Val="-1436" Err="510" Min="510" />
+							<s Val="-1180" Err="510" Min="510" />
+							<s Val="-895" Err="510" Min="510" />
+							<s Val="-573" Err="510" Min="510" />
+							<s Val="-211" Err="513" Min="513" />
+							<s Val="75" Err="530" Min="530" />
+							<s Val="416" Err="572" Min="572" />
+							<s Val="695" Err="621" Min="621" />
+							<s Val="944" Err="697" Min="697" />
+							<s Val="1172" Err="746" Min="746" />
+							<s Val="1368" Err="820" Min="820" />
+							<s Val="1511" Err="897" Min="897" />
+							<s Val="1597" Err="968" Min="968" />
+							<s Val="1671" Err="1031" Min="1031" />
+							<s Val="1702" Err="1076" Min="1076" />
+							<s Val="1717" Err="1103" Min="1103" />
+							<s Val="1709" Err="1127" Min="1127" />
+							<s Val="1624" Err="1116" Min="1116" />
+							<s Val="1530" Err="1142" Min="1142" />
+							<s Val="1374" Err="1101" Min="1101" />
+							<s Val="1225" Err="1053" Min="1053" />
+							<s Val="1062" Err="1002" Min="1002" />
+							<s Val="891" Err="946" Min="946" />
+							<s Val="735" Err="881" Min="881" />
+						</t>
+					</t>
+					<t id="6" Pts="28" Trs="1" MaxErr="33291" NumSp="1" Code="7">
+						<t>
+							<s Val="-2238" Err="574" Min="574" />
+							<s Val="-2321" Err="569" Min="569" />
+							<s Val="-1855" Err="480" Min="480" />
+							<s Val="-1595" Err="529" Min="529" />
+							<s Val="-1429" Err="666" Min="666" />
+							<s Val="-1247" Err="732" Min="732" />
+							<s Val="-1076" Err="858" Min="858" />
+							<s Val="-962" Err="960" Min="960" />
+							<s Val="-787" Err="960" Min="960" />
+							<s Val="-639" Err="959" Min="959" />
+							<s Val="-439" Err="962" Min="962" />
+							<s Val="-360" Err="963" Min="963" />
+							<s Val="-171" Err="961" Min="961" />
+							<s Val="-26" Err="959" Min="959" />
+							<s Val="128" Err="928" Min="928" />
+							<s Val="306" Err="881" Min="881" />
+							<s Val="446" Err="835" Min="835" />
+							<s Val="557" Err="801" Min="801" />
+							<s Val="710" Err="775" Min="775" />
+							<s Val="867" Err="754" Min="754" />
+							<s Val="997" Err="794" Min="794" />
+							<s Val="1082" Err="829" Min="829" />
+							<s Val="1231" Err="900" Min="900" />
+							<s Val="1319" Err="961" Min="961" />
+							<s Val="1370" Err="964" Min="964" />
+							<s Val="1395" Err="964" Min="964" />
+							<s Val="1419" Err="964" Min="964" />
+							<s Val="1381" Err="964" Min="964" />
+						</t>
+					</t>
+					<t id="7" Pts="28" Trs="1" MaxErr="30748" NumSp="1" Code="8">
+						<t>
+							<s Val="-3279" Err="939" Min="939" />
+							<s Val="-2090" Err="853" Min="853" />
+							<s Val="-711" Err="504" Min="504" />
+							<s Val="346" Err="640" Min="640" />
+							<s Val="1021" Err="850" Min="850" />
+							<s Val="1379" Err="839" Min="839" />
+							<s Val="1566" Err="699" Min="699" />
+							<s Val="1672" Err="604" Min="604" />
+							<s Val="1728" Err="624" Min="624" />
+							<s Val="1830" Err="668" Min="668" />
+							<s Val="1878" Err="762" Min="762" />
+							<s Val="1894" Err="845" Min="845" />
+							<s Val="1904" Err="944" Min="944" />
+							<s Val="1890" Err="979" Min="979" />
+							<s Val="1873" Err="987" Min="987" />
+							<s Val="1794" Err="1019" Min="1019" />
+							<s Val="1692" Err="987" Min="987" />
+							<s Val="1588" Err="944" Min="944" />
+							<s Val="1424" Err="917" Min="917" />
+							<s Val="1298" Err="834" Min="834" />
+							<s Val="1168" Err="804" Min="804" />
+							<s Val="1042" Err="739" Min="739" />
+							<s Val="890" Err="696" Min="696" />
+							<s Val="748" Err="628" Min="628" />
+							<s Val="683" Err="579" Min="579" />
+							<s Val="517" Err="586" Min="586" />
+							<s Val="406" Err="587" Min="587" />
+							<s Val="340" Err="563" Min="563" />
+						</t>
+					</t>
+					<t id="8" Pts="28" Trs="1" MaxErr="55000" NumSp="1" Code="9">
+						<t>
+							<s Val="-14756" Err="1416" Min="1416" />
+							<s Val="-10307" Err="2183" Min="2183" />
+							<s Val="-5707" Err="1405" Min="1405" />
+							<s Val="-2151" Err="1354" Min="1354" />
+							<s Val="497" Err="1354" Min="1354" />
+							<s Val="2326" Err="1354" Min="1354" />
+							<s Val="3602" Err="1354" Min="1354" />
+							<s Val="4430" Err="1354" Min="1354" />
+							<s Val="4837" Err="1354" Min="1354" />
+							<s Val="5139" Err="1354" Min="1354" />
+							<s Val="5652" Err="1354" Min="1354" />
+							<s Val="6132" Err="1354" Min="1354" />
+							<s Val="6599" Err="1354" Min="1354" />
+							<s Val="6846" Err="1354" Min="1354" />
+							<s Val="7106" Err="1354" Min="1354" />
+							<s Val="7057" Err="1354" Min="1354" />
+							<s Val="6992" Err="1354" Min="1354" />
+							<s Val="6517" Err="1354" Min="1354" />
+							<s Val="5762" Err="1354" Min="1354" />
+							<s Val="5209" Err="1354" Min="1354" />
+							<s Val="4550" Err="1354" Min="1354" />
+							<s Val="3971" Err="1354" Min="1354" />
+							<s Val="3518" Err="1354" Min="1354" />
+							<s Val="2965" Err="1354" Min="1354" />
+							<s Val="2603" Err="1354" Min="1354" />
+							<s Val="2467" Err="1354" Min="1354" />
+							<s Val="1919" Err="1354" Min="1354" />
+							<s Val="1605" Err="1354" Min="1354" />
+						</t>
+					</t>
+					<t id="9" Pts="28" Trs="1" MaxErr="72297" NumSp="1" Code="10">
+						<t>
+							<s Val="-14838" Err="1831" Min="1831" />
+							<s Val="-12440" Err="1831" Min="1831" />
+							<s Val="-9426" Err="1831" Min="1831" />
+							<s Val="-9078" Err="1831" Min="1831" />
+							<s Val="-8735" Err="1831" Min="1831" />
+							<s Val="-8376" Err="1831" Min="1831" />
+							<s Val="-7112" Err="1831" Min="1831" />
+							<s Val="-6135" Err="1831" Min="1831" />
+							<s Val="-5123" Err="1831" Min="1831" />
+							<s Val="-5314" Err="1831" Min="1831" />
+							<s Val="-5254" Err="1831" Min="1831" />
+							<s Val="-4720" Err="1831" Min="1831" />
+							<s Val="-3472" Err="1831" Min="1831" />
+							<s Val="-2764" Err="1831" Min="1831" />
+							<s Val="-2603" Err="1831" Min="1831" />
+							<s Val="-2788" Err="1831" Min="1831" />
+							<s Val="-2293" Err="1831" Min="1831" />
+							<s Val="-1554" Err="1831" Min="1831" />
+							<s Val="-1111" Err="1831" Min="1831" />
+							<s Val="-1331" Err="1831" Min="1831" />
+							<s Val="-1090" Err="1831" Min="1831" />
+							<s Val="-943" Err="1831" Min="1831" />
+							<s Val="-546" Err="1831" Min="1831" />
+							<s Val="-645" Err="1831" Min="1831" />
+							<s Val="-515" Err="1831" Min="1831" />
+							<s Val="-506" Err="1831" Min="1831" />
+							<s Val="224" Err="1831" Min="1831" />
+							<s Val="75" Err="1831" Min="1831" />
+						</t>
+					</t>
+					<t id="10" Pts="28" Trs="1" MaxErr="134425" NumSp="1" Code="11">
+						<t>
+							<s Val="21376" Err="3410" Min="3410" />
+							<s Val="21335" Err="3410" Min="3410" />
+							<s Val="21295" Err="3410" Min="3410" />
+							<s Val="21253" Err="3410" Min="3410" />
+							<s Val="21213" Err="3410" Min="3410" />
+							<s Val="21172" Err="3410" Min="3410" />
+							<s Val="21128" Err="3410" Min="3410" />
+							<s Val="21088" Err="3410" Min="3410" />
+							<s Val="21047" Err="3410" Min="3410" />
+							<s Val="21004" Err="3410" Min="3410" />
+							<s Val="20960" Err="3410" Min="3410" />
+							<s Val="20918" Err="3410" Min="3410" />
+							<s Val="20884" Err="3410" Min="3410" />
+							<s Val="20844" Err="3410" Min="3410" />
+							<s Val="20802" Err="3410" Min="3410" />
+							<s Val="16473" Err="3410" Min="3410" />
+							<s Val="12657" Err="3410" Min="3410" />
+							<s Val="10169" Err="3410" Min="3410" />
+							<s Val="8042" Err="3410" Min="3410" />
+							<s Val="5815" Err="3410" Min="3410" />
+							<s Val="2194" Err="3410" Min="3410" />
+							<s Val="728" Err="3410" Min="3410" />
+							<s Val="-363" Err="3410" Min="3410" />
+							<s Val="-1595" Err="3410" Min="3410" />
+							<s Val="-2876" Err="3410" Min="3410" />
+							<s Val="-4418" Err="3410" Min="3410" />
+							<s Val="-5406" Err="3410" Min="3410" />
+							<s Val="-6016" Err="3410" Min="3410" />
+						</t>
+					</t>
+					<t id="11" Pts="28" Trs="1" MaxErr="51797" NumSp="1" Code="12">
+						<t>
+							<s Val="-15470" Err="1296" Min="1296" />
+							<s Val="-8121" Err="1296" Min="1296" />
+							<s Val="-2446" Err="1296" Min="1296" />
+							<s Val="2107" Err="1296" Min="1296" />
+							<s Val="4300" Err="1296" Min="1296" />
+							<s Val="5342" Err="1296" Min="1296" />
+							<s Val="2059" Err="1296" Min="1296" />
+							<s Val="1173" Err="1296" Min="1296" />
+							<s Val="2065" Err="1296" Min="1296" />
+							<s Val="422" Err="1296" Min="1296" />
+							<s Val="-983" Err="1296" Min="1296" />
+							<s Val="1220" Err="1296" Min="1296" />
+							<s Val="1041" Err="1296" Min="1296" />
+							<s Val="1509" Err="1296" Min="1296" />
+							<s Val="1811" Err="1296" Min="1296" />
+							<s Val="3173" Err="1296" Min="1296" />
+							<s Val="6072" Err="1296" Min="1296" />
+							<s Val="7477" Err="1296" Min="1296" />
+							<s Val="7053" Err="1296" Min="1296" />
+							<s Val="6781" Err="1296" Min="1296" />
+							<s Val="7178" Err="1296" Min="1296" />
+							<s Val="7606" Err="1296" Min="1296" />
+							<s Val="8469" Err="1296" Min="1296" />
+							<s Val="8490" Err="1296" Min="1296" />
+							<s Val="7859" Err="1296" Min="1296" />
+							<s Val="7514" Err="1296" Min="1296" />
+							<s Val="6540" Err="1296" Min="1296" />
+							<s Val="5448" Err="1296" Min="1296" />
+						</t>
+					</t>
+					<t id="12" Pts="28" Trs="1" MaxErr="49916" NumSp="1" Code="13">
+						<t>
+							<s Val="-15576" Err="1249" Min="1249" />
+							<s Val="-9098" Err="1249" Min="1249" />
+							<s Val="-4701" Err="1249" Min="1249" />
+							<s Val="-1864" Err="1249" Min="1249" />
+							<s Val="563" Err="1249" Min="1249" />
+							<s Val="2175" Err="1249" Min="1249" />
+							<s Val="2417" Err="1249" Min="1249" />
+							<s Val="2980" Err="1249" Min="1249" />
+							<s Val="4003" Err="1249" Min="1249" />
+							<s Val="5049" Err="1249" Min="1249" />
+							<s Val="4956" Err="1249" Min="1249" />
+							<s Val="4069" Err="1249" Min="1249" />
+							<s Val="5581" Err="1249" Min="1249" />
+							<s Val="6139" Err="1249" Min="1249" />
+							<s Val="6397" Err="1249" Min="1249" />
+							<s Val="6062" Err="1249" Min="1249" />
+							<s Val="4545" Err="1249" Min="1249" />
+							<s Val="1165" Err="1249" Min="1249" />
+							<s Val="-1878" Err="1249" Min="1249" />
+							<s Val="-1053" Err="1249" Min="1249" />
+							<s Val="1325" Err="1249" Min="1249" />
+							<s Val="4163" Err="1249" Min="1249" />
+							<s Val="6021" Err="1249" Min="1249" />
+							<s Val="6013" Err="1249" Min="1249" />
+							<s Val="4798" Err="1249" Min="1249" />
+							<s Val="5072" Err="1249" Min="1249" />
+							<s Val="4669" Err="1249" Min="1249" />
+							<s Val="3653" Err="1249" Min="1249" />
+						</t>
+					</t>
+					<t id="13" Pts="28" Trs="1" MaxErr="133489" NumSp="1" Code="14">
+						<t>
+							<s Val="-21261" Err="3391" Min="3391" />
+							<s Val="-21217" Err="3391" Min="3391" />
+							<s Val="-21174" Err="3391" Min="3391" />
+							<s Val="-21130" Err="3391" Min="3391" />
+							<s Val="-21100" Err="3391" Min="3391" />
+							<s Val="-21052" Err="3391" Min="3391" />
+							<s Val="-21019" Err="3391" Min="3391" />
+							<s Val="-20973" Err="3391" Min="3391" />
+							<s Val="-20929" Err="3391" Min="3391" />
+							<s Val="-20892" Err="3391" Min="3391" />
+							<s Val="-20847" Err="3391" Min="3391" />
+							<s Val="-20812" Err="3391" Min="3391" />
+							<s Val="-20768" Err="3391" Min="3391" />
+							<s Val="-20725" Err="3391" Min="3391" />
+							<s Val="-20688" Err="3391" Min="3391" />
+							<s Val="-20641" Err="3391" Min="3391" />
+							<s Val="-20604" Err="3391" Min="3391" />
+							<s Val="-20561" Err="3391" Min="3391" />
+							<s Val="-20522" Err="3391" Min="3391" />
+							<s Val="-20484" Err="3391" Min="3391" />
+							<s Val="-20440" Err="3391" Min="3391" />
+							<s Val="-20405" Err="3391" Min="3391" />
+							<s Val="-20365" Err="3391" Min="3391" />
+							<s Val="-20322" Err="3391" Min="3391" />
+							<s Val="-20285" Err="3391" Min="3391" />
+							<s Val="-20241" Err="3391" Min="3391" />
+							<s Val="-20206" Err="3391" Min="3391" />
+							<s Val="-19978" Err="3391" Min="3391" />
+						</t>
+					</t>
+					<t id="14" Pts="28" Trs="1" MaxErr="56097" NumSp="1" Code="15">
+						<t>
+							<s Val="-13709" Err="1408" Min="1408" />
+							<s Val="-9112" Err="1408" Min="1408" />
+							<s Val="-2435" Err="1408" Min="1408" />
+							<s Val="1514" Err="1408" Min="1408" />
+							<s Val="2351" Err="1408" Min="1408" />
+							<s Val="2957" Err="1408" Min="1408" />
+							<s Val="4648" Err="1408" Min="1408" />
+							<s Val="7276" Err="1408" Min="1408" />
+							<s Val="9255" Err="1408" Min="1408" />
+							<s Val="9422" Err="1408" Min="1408" />
+							<s Val="9036" Err="1408" Min="1408" />
+							<s Val="7488" Err="1408" Min="1408" />
+							<s Val="5171" Err="1408" Min="1408" />
+							<s Val="5277" Err="1408" Min="1408" />
+							<s Val="5677" Err="1408" Min="1408" />
+							<s Val="5975" Err="1408" Min="1408" />
+							<s Val="6792" Err="1408" Min="1408" />
+							<s Val="5575" Err="1408" Min="1408" />
+							<s Val="3878" Err="1408" Min="1408" />
+							<s Val="3766" Err="1408" Min="1408" />
+							<s Val="3908" Err="1408" Min="1408" />
+							<s Val="4491" Err="1408" Min="1408" />
+							<s Val="4171" Err="1408" Min="1408" />
+							<s Val="4176" Err="1408" Min="1408" />
+							<s Val="3150" Err="1408" Min="1408" />
+							<s Val="2571" Err="1408" Min="1408" />
+							<s Val="1092" Err="1408" Min="1408" />
+							<s Val="179" Err="1408" Min="1408" />
+						</t>
+					</t>
+				</Ch19>
+			</TempOffline>
+		</Templates>
+		<View title="C:\remote\2021-11-04\10-25-33\spike2data" InfBkCR="0">
+			<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="225" b="450" l="426" r="1420" />
+			<Font hgt="-11" hthou="-115" wgt="400" paf="16" fnam="Times New Roman" />
+			<Chan Chan="31" DMode="9" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DHLine="1" DStateF="3" Ax="0" AdcAxMax="1" AxType="1" CWeight="3" ChType="5" BackOv="0" />
+			<Chan Chan="30" DMode="9" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DHLine="1" DStateF="3" Vis="0" Ax="0" AdcAxMax="1" FreqAxMax="2" AxType="1" ChType="5" BackOv="0" />
+			<Chan Chan="29" DMode="16" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DHLine="1" DStateF="3" Ax="0" AdcAxMax="1" FreqAxMax="2" AxType="1" CWeight="3" ChType="8" BackOv="0" />
+			<Chan Chan="28" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Vis="0" Ax="0" AxMin="-100" AxMax="100" AdcAxMin="-100" FreqAxMax="500" AxType="1" ChType="3" BackOv="0" />
+			<Chan Chan="27" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Vis="0" Ax="0" AxMin="-100" AxMax="100" AdcAxMin="-100" FreqAxMax="500" AxType="1" ChType="3" BackOv="0" />
+			<Chan Chan="26" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Vis="0" Ax="0" AdcAxMax="1" FreqAxMax="500" AxType="1" ChType="3" BackOv="0" />
+			<Chan Chan="25" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Ax="0" AxMax="5" AdcAxMax="5" FreqAxMax="500" AxType="1" CWeight="3" ChType="3" BackOv="0" />
+			<Chan Chan="24" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Vis="0" Ax="0" AdcAxMax="1" FreqAxMax="500" AxType="1" ChType="3" BackOv="0" />
+			<Chan Chan="23" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Ax="0" AdcAxMax="1" FreqAxMax="500" AxType="1" CWeight="3" ChType="3" BackOv="0" />
+			<Chan Chan="22" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Ax="0" AxMax="5" AdcAxMax="5" FreqAxMax="500" AxType="1" CWeight="3" ChType="3" BackOv="0" />
+			<Chan Chan="21" DMode="10" DWidth="-9.999999999999999e-06" DTrig="65535" DBoth="1" DStateF="3" Ax="0" AdcAxMax="1" AxType="1" CWeight="3" ChType="2" BackOv="0" />
+			<Chan Chan="19" DMode="10" DTrig="65535" DBoth="1" DStateF="3" DMkMode="1" Ax="0" AdcAxMin="-5" AdcAxMax="5" FreqAxMax="2000" CWeight="5" ChType="6" BackOv="0" />
+			<Chan Chan="0" DMode="11" DWidth="-9.999999999999999e-06" DDSize="-1" AxMin="-5" AxMax="5" AdcAxMin="-5" AdcAxMax="5" FreqAxMax="5000" AxType="1" CWeight="5" ChType="1" BackOv="0" />
+			<XInfo Right="10" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" VCCount="1">
+				<VCur id="0" LabMode="2" LabPos="0.2" Num="0" />
+			</XInfo>
+			<ChOrder Chans="13">
+				<c id="0" Chan="31" />
+				<c id="1" Chan="30" />
+				<c id="2" Chan="29" />
+				<c id="3" Chan="28" />
+				<c id="4" Chan="27" />
+				<c id="5" Chan="26" />
+				<c id="6" Chan="25" />
+				<c id="7" Chan="24" />
+				<c id="8" Chan="23" />
+				<c id="9" Chan="22" />
+				<c id="10" Chan="21" />
+				<c id="11" Chan="19" />
+				<c id="12" />
+			</ChOrder>
+			<CursVals />
+			<CursRegs />
+			<OvDraw3d YProp="0.5" XScale="0.5" YScale="0.5" />
+		</View>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  1" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="0" r="284" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  2" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="284" r="568" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  3" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="568" r="852" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  4" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="852" r="1136" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  5" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="1136" r="1420" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  6" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="0" r="284" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  7" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="284" r="568" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  8" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="568" r="852" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  9" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="852" r="1136" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  10" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="0" r="284" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  11" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="284" r="568" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  12" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="568" r="852" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  13" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="852" r="1136" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  14" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="0" b="113" l="1136" r="1420" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  15" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="0" r="284" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  16" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="284" r="568" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  17" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="568" r="852" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  18" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="852" r="1136" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetPsth" Type="0">
+			<SetPsth CSCod="19" CSMsk="254" CSStr="20" Width="2.25" Offs="0.12499999999999999" BinSz="0.049999999999999996" Rate="1" Raster="0" AddFilt="0" AddChan="-4" AddBefore="0" MaxAdd="1" MinAdd="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="Stim  19" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="1136" r="1420" />
+					<Font hgt="-8" hthou="-83" wgt="400" qual="1" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="1" DWidth="-1" DDSize="-1" DError="1" AxMin="-0.5" AxMax="0.5" AdcAxMin="-0.5" AdcAxMax="0.5" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" Ctrls="0" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetAverage" Type="0">
+			<SetAverage CSCod="0" CSMsk="268436513" CSStr="1" Width="2.25" Trig="21" Offs="0.12499999999999999" Mean="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="RawTrace" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="113" b="226" l="1136" r="1420" />
+					<Font hgt="-11" hthou="-115" wgt="400" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="2" DWidth="-1" DDSize="-1" DError="1" AxMax="100" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" YAxMode="3" XAxMode="3" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+		<ProcR Name="SetAverage" Type="0">
+			<SetAverage CSCod="0" CSMsk="268436513" CSStr="1" Width="2.25" Trig="21" Offs="0.12499999999999999" Mean="0" />
+			<m Start="0.0" End="100.0" Opt="1" />
+			<u Mode="4" Per="0.9999999999999999" PrePost="0.49999999999999994" TrChan="19" ScndTrChan="19" SwpLen="1.4999999999999998" PreTrig="0.49999999999999994" />
+			<DocRes>
+				<View title="SweepCounter" InfBkCR="0">
+					<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="182" b="563" l="182" r="1420" />
+					<Font hgt="-11" hthou="-115" wgt="400" paf="16" fnam="Times New Roman" />
+					<Chan Chan="0" DMode="2" DWidth="-1" DDSize="-1" DError="1" AxMax="100" AxType="1" ChType="127" BackOv="0" />
+					<XInfo Left="-0.12499999999999999" Right="2.125" XAxSmall="5" CRBack="0" VCLabMode="2" HCLabMode="1" />
+					<ChOrder Chans="1">
+						<c id="0" />
+					</ChOrder>
+					<CursVals />
+					<CursRegs />
+				</View>
+			</DocRes>
+		</ProcR>
+	</DocTime>
+	<App>
+		<WPlace flags="0" showc="1" minx="-1" miny="-1" maxx="-1" maxy="-1" t="58" b="817" l="2246" r="3686" />
+	</App>
+</CEDResources>
